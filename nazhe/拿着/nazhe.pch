@@ -1,0 +1,46 @@
+//
+//  nazhe.pch
+//  nazhe
+//
+//  Created by mocoo_ios1 on 15/8/12.
+//  Copyright (c) 2015年 YJJ. All rights reserved.
+//
+
+#ifndef nazhe_nazhe_pch
+#define nazhe_nazhe_pch
+
+#import "NZWebHandler.h"
+#import "NZExtern.h"
+#import "NZDefineH.h"
+#import "NZGlobal.h"
+#import "NZUser.h"
+#import "NZUserManager.h"
+#import "NZFastOperate.h"
+#import "NSString+NZ_Category.h"
+
+#import "MJRefresh.h"
+#import "UIView+MJExtension.h"
+#import "MJExtension.h"
+#import "Additions.h"
+#import "Masonry.h"
+#import "UIImageView+WebCache.h"
+#import "IQKeyboardManager.h"
+#import "MBProgressHUD.h"
+#import "UIView+Toast.h"
+
+#endif
+
+/**
+ *  @author YJJ, 15-08-13 16:58:24
+ *
+ *  自定义log方式，并使NSLog只在调试时使用
+ */
+#ifdef DEBUG
+
+#define     NSLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+#else
+
+#define     NSLog(fmt, ...) NSLog(@"")
+
+#endif

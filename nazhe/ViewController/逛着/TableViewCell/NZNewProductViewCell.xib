@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="237" id="KGk-i7-Jjw" customClass="NZNewProductViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="237"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GaT-ks-R2K" userLabel="Left View">
+                        <rect key="frame" x="10" y="10" width="173" height="226"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小活动图2.png" translatesAutoresizingMaskIntoConstraints="NO" id="LJT-GG-Nrh">
+                                <rect key="frame" x="0.0" y="0.0" width="173" height="173"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="LJT-GG-Nrh" secondAttribute="height" multiplier="1:1" id="R2W-By-gdx"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LJT-GG-Nrh" firstAttribute="top" secondItem="GaT-ks-R2K" secondAttribute="top" id="6TL-Cu-smJ"/>
+                            <constraint firstItem="LJT-GG-Nrh" firstAttribute="leading" secondItem="GaT-ks-R2K" secondAttribute="leading" id="hXD-jr-VxL"/>
+                            <constraint firstAttribute="trailing" secondItem="LJT-GG-Nrh" secondAttribute="trailing" id="zph-IV-FAq"/>
+                        </constraints>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tz2-Cf-uTy" userLabel="Right View">
+                        <rect key="frame" x="193" y="10" width="172" height="226"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小活动图1.png" translatesAutoresizingMaskIntoConstraints="NO" id="3HQ-kc-2sv">
+                                <rect key="frame" x="0.0" y="0.0" width="172" height="173"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="3HQ-kc-2sv" secondAttribute="height" multiplier="1:1" id="v0Z-YS-Ql1"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="3HQ-kc-2sv" secondAttribute="trailing" id="Eup-hD-obZ"/>
+                            <constraint firstItem="3HQ-kc-2sv" firstAttribute="top" secondItem="Tz2-Cf-uTy" secondAttribute="top" id="dUK-P9-RrU"/>
+                            <constraint firstItem="3HQ-kc-2sv" firstAttribute="leading" secondItem="Tz2-Cf-uTy" secondAttribute="leading" id="jfO-98-Rr3"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="Tz2-Cf-uTy" secondAttribute="trailing" constant="10" id="JT1-aF-14Y"/>
+                    <constraint firstItem="Tz2-Cf-uTy" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="RU2-kn-Fiw"/>
+                    <constraint firstAttribute="bottom" secondItem="GaT-ks-R2K" secondAttribute="bottom" id="Rce-k5-jb4"/>
+                    <constraint firstItem="Tz2-Cf-uTy" firstAttribute="width" secondItem="GaT-ks-R2K" secondAttribute="width" id="bdL-dq-FIv"/>
+                    <constraint firstItem="GaT-ks-R2K" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="dIZ-0C-6r8"/>
+                    <constraint firstAttribute="bottom" secondItem="Tz2-Cf-uTy" secondAttribute="bottom" id="dhF-iR-Az6"/>
+                    <constraint firstItem="GaT-ks-R2K" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="ggi-aV-eL7"/>
+                    <constraint firstItem="Tz2-Cf-uTy" firstAttribute="leading" secondItem="GaT-ks-R2K" secondAttribute="trailing" constant="10" id="mPm-ME-cLL"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="leftImageView" destination="LJT-GG-Nrh" id="VzW-z1-6jg"/>
+                <outlet property="leftView" destination="GaT-ks-R2K" id="re7-GL-buM"/>
+                <outlet property="rightImageView" destination="3HQ-kc-2sv" id="R4W-06-sf6"/>
+                <outlet property="rightView" destination="Tz2-Cf-uTy" id="qc2-YB-wuf"/>
+            </connections>
+            <point key="canvasLocation" x="446.5" y="350.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="小活动图1.png" width="518" height="518"/>
+        <image name="小活动图2.png" width="519" height="518"/>
+    </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

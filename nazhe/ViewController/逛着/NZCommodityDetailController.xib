@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NZCommodityDetailController">
+            <connections>
+                <outlet property="bottomViewHeight" destination="5GU-eM-hqm" id="Tob-WB-s8C"/>
+                <outlet property="lastGoodNameLab" destination="AfD-OF-ka3" id="oz8-3m-Xzk"/>
+                <outlet property="nextGoodNameLab" destination="o4S-j6-fWV" id="RBC-wV-dzU"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ExO-Sq-hHC">
+                    <rect key="frame" x="0.0" y="528" width="320" height="40"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="时尚飘花手镯  下一个" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o4S-j6-fWV">
+                            <rect key="frame" x="160" y="0.0" width="133" height="40"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="左键" translatesAutoresizingMaskIntoConstraints="NO" id="Nss-te-CPc">
+                            <rect key="frame" x="15" y="18" width="12" height="5"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="5" id="WQR-LP-P7v"/>
+                                <constraint firstAttribute="width" constant="12" id="pP5-i6-dAy"/>
+                            </constraints>
+                        </imageView>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="右键" translatesAutoresizingMaskIntoConstraints="NO" id="roQ-rC-Yql">
+                            <rect key="frame" x="293" y="18" width="12" height="5"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="5" id="ERI-Cv-sWf"/>
+                                <constraint firstAttribute="width" constant="12" id="wMR-c3-aHn"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="上一个  时尚飘花手镯" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AfD-OF-ka3">
+                            <rect key="frame" x="27" y="0.0" width="133" height="40"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qoo-bx-pH8">
+                            <rect key="frame" x="0.0" y="0.0" width="160" height="40"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <state key="normal">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="lastGoodAction:" destination="-1" eventType="touchUpInside" id="hQ4-zV-Xqb"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hRl-hH-wSH">
+                            <rect key="frame" x="160" y="0.0" width="160" height="40"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <state key="normal">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="nextGoodAction:" destination="-1" eventType="touchUpInside" id="SbX-hZ-Jk7"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="qoo-bx-pH8" firstAttribute="top" secondItem="ExO-Sq-hHC" secondAttribute="top" id="28w-Ic-IsK"/>
+                        <constraint firstItem="hRl-hH-wSH" firstAttribute="leading" secondItem="qoo-bx-pH8" secondAttribute="trailing" id="4VB-iH-MPW"/>
+                        <constraint firstAttribute="height" constant="40" id="5GU-eM-hqm"/>
+                        <constraint firstItem="AfD-OF-ka3" firstAttribute="top" secondItem="ExO-Sq-hHC" secondAttribute="top" id="9pc-II-lpb"/>
+                        <constraint firstAttribute="centerY" secondItem="Nss-te-CPc" secondAttribute="centerY" id="Bbg-ij-1cI"/>
+                        <constraint firstAttribute="bottom" secondItem="qoo-bx-pH8" secondAttribute="bottom" id="KdK-te-e1I"/>
+                        <constraint firstAttribute="bottom" secondItem="hRl-hH-wSH" secondAttribute="bottom" id="Npu-7M-tc3"/>
+                        <constraint firstItem="o4S-j6-fWV" firstAttribute="leading" secondItem="AfD-OF-ka3" secondAttribute="trailing" id="Nql-yE-TRa"/>
+                        <constraint firstAttribute="trailing" secondItem="roQ-rC-Yql" secondAttribute="trailing" constant="15" id="WnB-Jb-3IY"/>
+                        <constraint firstItem="qoo-bx-pH8" firstAttribute="width" secondItem="hRl-hH-wSH" secondAttribute="width" id="XFc-cK-YPL"/>
+                        <constraint firstAttribute="centerY" secondItem="roQ-rC-Yql" secondAttribute="centerY" id="aXa-dy-Fp9"/>
+                        <constraint firstAttribute="bottom" secondItem="o4S-j6-fWV" secondAttribute="bottom" id="cSk-As-w1I"/>
+                        <constraint firstItem="hRl-hH-wSH" firstAttribute="leading" secondItem="qoo-bx-pH8" secondAttribute="trailing" id="ghU-qQ-jtt"/>
+                        <constraint firstItem="Nss-te-CPc" firstAttribute="leading" secondItem="ExO-Sq-hHC" secondAttribute="leading" constant="15" id="gwX-Qo-py0"/>
+                        <constraint firstItem="o4S-j6-fWV" firstAttribute="leading" secondItem="AfD-OF-ka3" secondAttribute="trailing" id="hUx-hZ-Rar"/>
+                        <constraint firstAttribute="bottom" secondItem="AfD-OF-ka3" secondAttribute="bottom" id="nIU-t4-rgX"/>
+                        <constraint firstItem="AfD-OF-ka3" firstAttribute="width" secondItem="o4S-j6-fWV" secondAttribute="width" id="rFf-gW-gd3"/>
+                        <constraint firstAttribute="trailing" secondItem="hRl-hH-wSH" secondAttribute="trailing" id="rMe-nG-jsb"/>
+                        <constraint firstItem="hRl-hH-wSH" firstAttribute="top" secondItem="ExO-Sq-hHC" secondAttribute="top" id="rOq-Af-iKe"/>
+                        <constraint firstItem="o4S-j6-fWV" firstAttribute="top" secondItem="ExO-Sq-hHC" secondAttribute="top" id="sLB-7b-LPu"/>
+                        <constraint firstItem="qoo-bx-pH8" firstAttribute="leading" secondItem="ExO-Sq-hHC" secondAttribute="leading" id="tS0-Ce-IIM"/>
+                        <constraint firstItem="AfD-OF-ka3" firstAttribute="leading" secondItem="Nss-te-CPc" secondAttribute="trailing" id="utl-cK-zpO"/>
+                        <constraint firstItem="roQ-rC-Yql" firstAttribute="leading" secondItem="o4S-j6-fWV" secondAttribute="trailing" id="wmi-cR-a2O"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="ExO-Sq-hHC" secondAttribute="bottom" id="Eu4-vu-F8Z"/>
+                <constraint firstAttribute="trailing" secondItem="ExO-Sq-hHC" secondAttribute="trailing" id="gre-n3-DcD"/>
+                <constraint firstItem="ExO-Sq-hHC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="u8w-53-Ke0"/>
+            </constraints>
+            <point key="canvasLocation" x="411" y="285"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="右键" width="36" height="15"/>
+        <image name="左键" width="36" height="15"/>
+    </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>
