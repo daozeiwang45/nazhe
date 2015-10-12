@@ -10,6 +10,7 @@
 #import "AdView.h"
 #import "GoodDetailModel.h"
 #import "NZLoginViewController.h"
+#import "NZOrderSelectedViewController.h"
 
 #define topHeight ScreenWidth*75/375
 #define secondHeight ScreenWidth*50/375
@@ -209,7 +210,9 @@
     // 立即拿着
     UIButton *buyBtn = [[UIButton alloc] initWithFrame:CGRectMake((ScreenWidth-ScreenWidth*75/375)/2, ScreenWidth*10/375, ScreenWidth*75/375, ScreenWidth*75/375)];
     [buyBtn setBackgroundImage:[UIImage imageNamed:@"立即拿着"] forState:UIControlStateNormal];
+    [buyBtn addTarget:self action:@selector(buyButtonAction:) forControlEvents:UIControlEventTouchDown];
     [btnView addSubview:buyBtn];
+    
     
     UILabel *buyLab = [[UILabel alloc] initWithFrame:CGRectMake((ScreenWidth-ScreenWidth*100/375)/2, ScreenWidth*90/375, 100, 15)];
     buyLab.text = @"立即拿着";
@@ -1054,6 +1057,14 @@
         UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"您未登录" message:@"是否现在登录" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"登录", nil];
         [alertview show];
     }
+}
+
+#pragma mark 点击立即拿着方法--跳到选择商品参数页面----许景源
+- (void)buyButtonAction:(UIGestureRecognizer *)gestureRecognizer {
+    
+    NZOrderSelectedViewController *orderSelectedViewCtr = [[NZOrderSelectedViewController alloc] initWithNibName:@"NZOrderSelectedViewController" bundle:nil];
+    orderSelectedViewCtr.goodID = self.goodID;
+    [self.navigationController pushViewController:orderSelectedViewCtr animated:YES];
 }
 
 #pragma mark UIAlertViewDelegate
