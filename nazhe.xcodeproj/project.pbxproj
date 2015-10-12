@@ -237,6 +237,7 @@
 		4FFB32551BCB5F0600306AFD /* openssl_wrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB32441BCB5F0600306AFD /* openssl_wrapper.m */; };
 		4FFB32561BCB5F0600306AFD /* RSADataSigner.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB32461BCB5F0600306AFD /* RSADataSigner.m */; };
 		4FFB32571BCB5F0600306AFD /* RSADataVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB32481BCB5F0600306AFD /* RSADataVerifier.m */; };
+		4FFB325B1BCB61CE00306AFD /* GoodParametersModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB325A1BCB61CE00306AFD /* GoodParametersModel.m */; };
 		8B26E9780D30B0641028CB31 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 542596E77A95723CD4326024 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -708,6 +709,8 @@
 		4FFB32461BCB5F0600306AFD /* RSADataSigner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSADataSigner.m; sourceTree = "<group>"; };
 		4FFB32471BCB5F0600306AFD /* RSADataVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSADataVerifier.h; sourceTree = "<group>"; };
 		4FFB32481BCB5F0600306AFD /* RSADataVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSADataVerifier.m; sourceTree = "<group>"; };
+		4FFB32591BCB61CE00306AFD /* GoodParametersModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodParametersModel.h; sourceTree = "<group>"; };
+		4FFB325A1BCB61CE00306AFD /* GoodParametersModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodParametersModel.m; sourceTree = "<group>"; };
 		542596E77A95723CD4326024 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		56D4D7C5708F1A371272F017 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		990D2BD85732F5B939BC7CDF /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -1084,6 +1087,7 @@
 		1F49C62A1B7B4240006532B7 /* 逛着 */ = {
 			isa = PBXGroup;
 			children = (
+				4FFB32581BCB61CE00306AFD /* 商品参数及订单 */,
 				1F2E0AF01BB41BE300A010C9 /* MaterialListModel.h */,
 				1F2E0AF11BB41BE300A010C9 /* MaterialListModel.m */,
 				1F2E0AF31BB43DAF00A010C9 /* StyleListModel.h */,
@@ -1964,6 +1968,15 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		4FFB32581BCB61CE00306AFD /* 商品参数及订单 */ = {
+			isa = PBXGroup;
+			children = (
+				4FFB32591BCB61CE00306AFD /* GoodParametersModel.h */,
+				4FFB325A1BCB61CE00306AFD /* GoodParametersModel.m */,
+			);
+			path = "商品参数及订单";
+			sourceTree = "<group>";
+		};
 		7EFB3D001255DA24F5AFF40A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2316,6 +2329,7 @@
 				1F5C30CA1B8EEF43008C7533 /* NZCommodityListCell.m in Sources */,
 				1F7AE2621B7CB043008A26EA /* NSArray+Category.m in Sources */,
 				1F4A9EE01BA703BE005E8C33 /* NZProtocolViewController.m in Sources */,
+				4FFB325B1BCB61CE00306AFD /* GoodParametersModel.m in Sources */,
 				1F6EB80A1BB2CC1600CD8B93 /* OrderListModel.m in Sources */,
 				1F5BAB801B94253200271584 /* NZTakeContentView.m in Sources */,
 				1F7AE2721B7CB043008A26EA /* UITableView+ZGParallelView.m in Sources */,
@@ -2470,6 +2484,23 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen Mocoo Network Technology Co., Ltd.";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/nazhe/拿着/nazhe.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/IQKeyboardManager\"",
+					"\"${PODS_ROOT}/Headers/Public/KVNProgress\"",
+					"\"${PODS_ROOT}/Headers/Public/MBProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/MJExtension\"",
+					"\"${PODS_ROOT}/Headers/Public/MJRefresh\"",
+					"\"${PODS_ROOT}/Headers/Public/Masonry\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Toast\"",
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"$(PROJECT_DIR)/nazhe/ViewController/逛着/订单确认/支付宝支付文件",
+				);
 				INFOPLIST_FILE = "nazhe/拿着/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2489,6 +2520,23 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Xiamen Mocoo Network Technology Co., Ltd.";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/nazhe/拿着/nazhe.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/IQKeyboardManager\"",
+					"\"${PODS_ROOT}/Headers/Public/KVNProgress\"",
+					"\"${PODS_ROOT}/Headers/Public/MBProgressHUD\"",
+					"\"${PODS_ROOT}/Headers/Public/MJExtension\"",
+					"\"${PODS_ROOT}/Headers/Public/MJRefresh\"",
+					"\"${PODS_ROOT}/Headers/Public/Masonry\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Toast\"",
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"$(PROJECT_DIR)/nazhe/ViewController/逛着/订单确认/支付宝支付文件",
+				);
 				INFOPLIST_FILE = "nazhe/拿着/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
