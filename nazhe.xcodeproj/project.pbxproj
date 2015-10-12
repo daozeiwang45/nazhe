@@ -248,6 +248,11 @@
 		4FFB32731BCB65EF00306AFD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFB32721BCB65EF00306AFD /* Foundation.framework */; };
 		4FFB32761BCB739200306AFD /* AlipaySDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4FFB32741BCB739200306AFD /* AlipaySDK.bundle */; };
 		4FFB32771BCB739200306AFD /* AlipaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFB32751BCB739200306AFD /* AlipaySDK.framework */; };
+		4FFB327A1BCB753900306AFD /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFB32781BCB753900306AFD /* libcrypto.a */; };
+		4FFB327B1BCB753900306AFD /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FFB32791BCB753900306AFD /* libssl.a */; };
+		4FFB32801BCB789600306AFD /* 灰圈.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FFB327D1BCB789600306AFD /* 灰圈.png */; };
+		4FFB32811BCB789600306AFD /* 红勾.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FFB327E1BCB789600306AFD /* 红勾.png */; };
+		4FFB32821BCB789600306AFD /* 红圈.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FFB327F1BCB789600306AFD /* 红圈.png */; };
 		8B26E9780D30B0641028CB31 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 542596E77A95723CD4326024 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -731,6 +736,11 @@
 		4FFB32721BCB65EF00306AFD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4FFB32741BCB739200306AFD /* AlipaySDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AlipaySDK.bundle; sourceTree = "<group>"; };
 		4FFB32751BCB739200306AFD /* AlipaySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlipaySDK.framework; sourceTree = "<group>"; };
+		4FFB32781BCB753900306AFD /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
+		4FFB32791BCB753900306AFD /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
+		4FFB327D1BCB789600306AFD /* 灰圈.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "灰圈.png"; sourceTree = "<group>"; };
+		4FFB327E1BCB789600306AFD /* 红勾.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "红勾.png"; sourceTree = "<group>"; };
+		4FFB327F1BCB789600306AFD /* 红圈.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "红圈.png"; sourceTree = "<group>"; };
 		542596E77A95723CD4326024 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		56D4D7C5708F1A371272F017 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		990D2BD85732F5B939BC7CDF /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -747,7 +757,9 @@
 				4FFB326F1BCB65DA00306AFD /* CoreGraphics.framework in Frameworks */,
 				4FFB326D1BCB65C500306AFD /* CoreText.framework in Frameworks */,
 				4FFB326B1BCB65BA00306AFD /* QuartzCore.framework in Frameworks */,
+				4FFB327A1BCB753900306AFD /* libcrypto.a in Frameworks */,
 				4FFB32691BCB65AA00306AFD /* CoreTelephony.framework in Frameworks */,
+				4FFB327B1BCB753900306AFD /* libssl.a in Frameworks */,
 				4FFB32671BCB650800306AFD /* SystemConfiguration.framework in Frameworks */,
 				4FFB32651BCB64DF00306AFD /* libz.dylib in Frameworks */,
 				8B26E9780D30B0641028CB31 /* libPods.a in Frameworks */,
@@ -1351,6 +1363,7 @@
 		1F49C63F1B7B45D3006532B7 /* resource */ = {
 			isa = PBXGroup;
 			children = (
+				4FFB327C1BCB789600306AFD /* 订单用图 */,
 				1F530F4F1BA523AD00D93241 /* 图标8.png */,
 				1F530F501BA523AD00D93241 /* 图标9.png */,
 				1F70DD0B1BA2CA93009266C7 /* 订单商品.png */,
@@ -2008,6 +2021,16 @@
 			path = "商品参数及订单";
 			sourceTree = "<group>";
 		};
+		4FFB327C1BCB789600306AFD /* 订单用图 */ = {
+			isa = PBXGroup;
+			children = (
+				4FFB327D1BCB789600306AFD /* 灰圈.png */,
+				4FFB327E1BCB789600306AFD /* 红勾.png */,
+				4FFB327F1BCB789600306AFD /* 红圈.png */,
+			);
+			path = "订单用图";
+			sourceTree = "<group>";
+		};
 		7EFB3D001255DA24F5AFF40A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2020,6 +2043,8 @@
 				4FFB32661BCB650800306AFD /* SystemConfiguration.framework */,
 				4FFB32641BCB64DF00306AFD /* libz.dylib */,
 				1F6A40401BA13E0D00A6B501 /* Accelerate.framework */,
+				4FFB32781BCB753900306AFD /* libcrypto.a */,
+				4FFB32791BCB753900306AFD /* libssl.a */,
 				542596E77A95723CD4326024 /* libPods.a */,
 			);
 			name = Frameworks;
@@ -2122,6 +2147,7 @@
 				1F4B36C21BA014AC009C3907 /* 活动图1.png in Resources */,
 				1F49C5EF1B7AFA9C006532B7 /* LaunchScreen.xib in Resources */,
 				1F4B36B11B9FE31A009C3907 /* NZGrabViewCell.xib in Resources */,
+				4FFB32811BCB789600306AFD /* 红勾.png in Resources */,
 				1F4B36D61BA047DB009C3907 /* 品牌图2.png in Resources */,
 				1F4004E11B817CDA00BA59DB /* cellLine@2x.png in Resources */,
 				1F4B36B51BA00B52009C3907 /* 品牌海报.png in Resources */,
@@ -2131,6 +2157,7 @@
 				1F66D67A1B96A7B0007CFF94 /* NZPrivilegeViewController.xib in Resources */,
 				1F7D39EB1B903BF300C5E039 /* NZCommodityDetailController.xib in Resources */,
 				1F6A40451BA16B5000A6B501 /* 底图.png in Resources */,
+				4FFB32801BCB789600306AFD /* 灰圈.png in Resources */,
 				1FA12FAE1B9B0DF3005DDAAF /* NZMessageExpendViewCell.xib in Resources */,
 				1F530F761BA56F8E00D93241 /* NZDeliveryAddressViewCell.xib in Resources */,
 				1FA12F9E1B9A9804005DDAAF /* NZTakeContentView.xib in Resources */,
@@ -2175,6 +2202,7 @@
 				1F645ABE1B95D38E001CBC20 /* NZOrderExpendViewCell.xib in Resources */,
 				1F4B36F41BA06BD0009C3907 /* 手镯底图.png in Resources */,
 				1F4B36ED1BA06BB3009C3907 /* 手串图标.png in Resources */,
+				4FFB32821BCB789600306AFD /* 红圈.png in Resources */,
 				1F530F511BA523AD00D93241 /* 图标8.png in Resources */,
 				1F49C61F1B7B409C006532B7 /* Info.plist in Resources */,
 				4FFB324E1BCB5F0600306AFD /* NZOrderSelectedViewController.xib in Resources */,
@@ -2549,6 +2577,10 @@
 				INFOPLIST_FILE = "nazhe/拿着/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b353b626-44ba-4ddc-87fa-40d58f3c358b";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
@@ -2590,6 +2622,10 @@
 				INFOPLIST_FILE = "nazhe/拿着/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b353b626-44ba-4ddc-87fa-40d58f3c358b";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
