@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1E416C7F-7645-4411-B270-449825B16D30</string>
+	<key>IDESourceControlProjectName</key>
+	<string>nazhe</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5594294B15A31AC7F42173D7DCD413924B255CF1</key>
+		<string>https://github.com/daozeiwang45/nazhe.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>nazhe.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5594294B15A31AC7F42173D7DCD413924B255CF1</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/daozeiwang45/nazhe.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5594294B15A31AC7F42173D7DCD413924B255CF1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5594294B15A31AC7F42173D7DCD413924B255CF1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>nazhe</string>
+		</dict>
+	</array>
+</dict>
+</plist>
