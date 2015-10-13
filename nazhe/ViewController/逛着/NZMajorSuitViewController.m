@@ -27,6 +27,68 @@
     [self createNavigationItemTitleViewWithTitle:@"大牌档"];
     [self leftButtonTitle:nil];
     
+    [self requestData];
+}
+
+#pragma mark  请求数据
+-(void) requestData{
+    
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    hud.labelText = @"请稍候..." ;
+    NSDictionary *parameters = @{
+                                 @"userId":[NSNumber numberWithInt:6],
+                                 @"shopId":[NSNumber numberWithInt:3]
+                                 
+                                 };
+
+    [handler postURLStr:webGetMajorSuitIndex postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+         
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         if( state )
+         {
+            
+             self.majorSuitDetailInfoArry = [NSMutableArray new];
+             self.majorSuitDetailShopInfoDict = [NSMutableDictionary new];
+             //把基本信息majorSuitDetailInfoArry
+             self.majorSuitDetailShopInfoDict = [retInfo objectForKey:@"shopInfo"];
+             self.majorSuitDetailInfoArry = [retInfo objectForKey:@"isRecomment"];
+             
+             self.hotStr = [retInfo objectForKey:@"hotCount"];
+             self.topicStr = [retInfo objectForKey:@"topicCount"];
+             self.showStr = [retInfo objectForKey:@"showCount"];
+             self.shareStr = [retInfo objectForKey:@"shoreCount"];
+             [self initInface];
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
+
+    
+}
+
+-(void)initInface{
+    
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.backgroundColor = UIDefaultBackgroundColor;
@@ -38,7 +100,11 @@
     tableHeaderView.backgroundColor = [UIColor whiteColor];
     
     UIImageView *brandImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*150/375)];
-    brandImgView.image = [UIImage imageNamed:@"大牌档品牌图"];
+    //图片地址
+    NSString *imgStr =[NZGlobal GetImgBaseURL:[self.majorSuitDetailShopInfoDict objectForKey:@"bgImg"]];
+    NSURL *imgURL = [NSURL URLWithString:imgStr];
+    [brandImgView sd_setImageWithURL:imgURL placeholderImage:defaultImage];
+    
     [tableHeaderView addSubview:brandImgView];
     
     // 大牌档工具条
@@ -59,7 +125,7 @@
     [hotView addSubview:hotImg];
     
     UILabel *hotLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(hotImg.frame), width, 20)];
-    hotLabel.text = @"热度 112";
+    hotLabel.text = [NSString stringWithFormat:@"热度 %@",self.hotStr];
     hotLabel.textColor = labelTextColor;
     hotLabel.font = labelFont;
     hotLabel.textAlignment = NSTextAlignmentCenter;
@@ -74,7 +140,7 @@
     [topicView addSubview:topicImg];
     
     UILabel *topicLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(hotImg.frame), width, 20)];
-    topicLabel.text = @"话题 204";
+    topicLabel.text = [NSString stringWithFormat:@"话题 %@",self.topicStr] ;
     topicLabel.textColor = labelTextColor;
     topicLabel.font = labelFont;
     topicLabel.textAlignment = NSTextAlignmentCenter;
@@ -89,7 +155,8 @@
     [showView addSubview:showImg];
     
     UILabel *showLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(hotImg.frame), width, 20)];
-    showLabel.text = @"SHOW 25";
+    showLabel.text = [NSString stringWithFormat:@"SHOW %@",self.showStr
+    ];
     showLabel.textColor = labelTextColor;
     showLabel.font = labelFont;
     showLabel.textAlignment = NSTextAlignmentCenter;
@@ -104,7 +171,7 @@
     [shareView addSubview:shareImg];
     
     UILabel *shareLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(hotImg.frame), width, 20)];
-    shareLabel.text = @"分享 15";
+    shareLabel.text = [NSString stringWithFormat:@"分享 %@",self.shareStr];
     shareLabel.textColor = labelTextColor;
     shareLabel.font = labelFont;
     shareLabel.textAlignment = NSTextAlignmentCenter;
@@ -115,7 +182,14 @@
 
 #pragma mark UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    if (self.majorSuitDetailInfoArry.count % 2 == 1) {
+        
+        return self.majorSuitDetailInfoArry.count/2+1;
+    }else {
+        
+        return self.majorSuitDetailInfoArry.count/2;
+    }
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -127,6 +201,29 @@
     
 //    cell.leftGrabIcon.image = [UIImage imageNamed:@"立即抢购"];
 //    cell.rightGrabIcon.image = [UIImage imageNamed:@"立即抢购"];
+
+    //---------左边--------
+    //图片地址
+    NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2] objectForKey:@"img"]];
+    
+    NSURL *imgURL = [NSURL URLWithString:smallImg];
+    [cell.leftImageView sd_setImageWithURL:imgURL placeholderImage:defaultImage];
+    cell.leftNameLabel.text = [[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2]objectForKey:@"name"];
+    cell.leftPriceLabel.text = [NSString stringWithFormat:@"价格￥%@",[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2]objectForKey:@"marketPrice"]];
+    //---------右边-----------
+    //右边的一个没有值
+    if (indexPath.row*2+1+1 > self.majorSuitDetailInfoArry.count) {
+        cell.rightView.hidden = YES;
+    }else{
+        
+        //图片地址
+        NSString *smallImg1 =[NZGlobal GetImgBaseURL:[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2+1] objectForKey:@"img"]];
+        NSURL *imgURL1 = [NSURL URLWithString:smallImg1];
+        [cell.rightImageView sd_setImageWithURL:imgURL1 placeholderImage:defaultImage];
+        cell.rightNameLabel.text = [[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2+1]objectForKey:@"name"];
+        cell.rightPriceLabel.text = [NSString stringWithFormat:@"价格￥%@",[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2+1]objectForKey:@"marketPrice"]];
+    }
+    
 
     cell.newOrBuy = enumtNewClubOrBuyNow_BuyNow;
     

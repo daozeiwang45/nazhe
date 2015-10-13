@@ -10,8 +10,11 @@
 
 @interface NZCouponsViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *couponTittleLable;
+
 @property (strong, nonatomic) IBOutlet UILabel *couponLabel;
 @property (strong, nonatomic) IBOutlet UILabel *remainLabel;
 @property (strong, nonatomic) IBOutlet UIImageView *backImage;
+@property (weak, nonatomic) IBOutlet UIImageView *couponImgView;
 
 @end
