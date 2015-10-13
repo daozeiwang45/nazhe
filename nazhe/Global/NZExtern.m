@@ -29,6 +29,12 @@ NSString *webActivityDetail = @"lianzhe/ActivityDetail"; // 活动详情页接�
 
 NSString *webStrollFirstPage = @"Goods/GetCategory"; // 逛着首页材质列表接口
 NSString *webGetStyleList = @"Goods/GetStyle"; // 逛着首页款式列表接口
+NSString *webGetLimitedList = @"Activity/GetLimitedList"; // 逛着优惠活动限时抢列表接口
+NSString *webGetNewList = @"Activity/GetNewGoodsList"; // 逛着优惠活动新品汇列表接口
+NSString *webGetCouponsList = @"Activity/GetCouponsList"; // 逛着优惠活动优享卷列表接口
+NSString *webReceiveCoupons = @"Activity/ReceiveCoupons"; // 逛着优惠活动优享卷领取接口Activity/GetShopList
+NSString *webGetMajorSuit = @"Activity/GetShopList"; // 逛着优惠活动大牌档接口
+NSString *webGetMajorSuitIndex = @"Goods/ShopIndex"; // 逛着优惠活动大牌档首页接口
 NSString *webGoodsList = @"Goods/GoodsList"; // 逛着商品列表接口
 NSString *webGoodsDetail = @"Goods/GoodsDetail"; // 逛着商品详情接口
 NSString *webGoodSetLike = @"Goods/SetIsLike"; // 喜欢和取消喜欢接口

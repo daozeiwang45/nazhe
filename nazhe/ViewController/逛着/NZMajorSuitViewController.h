@@ -10,4 +10,12 @@
 
 @interface NZMajorSuitViewController : NZViewController
 
+@property (nonatomic,strong)NSMutableDictionary *majorSuitDetailShopInfoDict;
+@property (nonatomic,strong)NSMutableArray *majorSuitDetailInfoArry;
+
+@property (nonatomic,strong)NSString *hotStr;
+@property (nonatomic,strong)NSString *topicStr;
+@property (nonatomic,strong)NSString *showStr;
+@property (nonatomic,strong)NSString *shareStr;
+
 @end
