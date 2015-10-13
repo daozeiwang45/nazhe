@@ -67,6 +67,10 @@
 		1F49C6211B7B409C006532B7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49C61C1B7B409C006532B7 /* ViewController.m */; };
 		1F49C6261B7B41DB006532B7 /* NZUserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49C6251B7B41DB006532B7 /* NZUserManager.m */; };
 		1F49C6291B7B41E8006532B7 /* NZUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49C6281B7B41E8006532B7 /* NZUser.m */; };
+		1F49FBA71BCBBC9300FD0014 /* NZActivityReviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49FBA61BCBBC9300FD0014 /* NZActivityReviewController.m */; };
+		1F49FBAA1BCBD15D00FD0014 /* ActivityReviewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49FBA91BCBD15D00FD0014 /* ActivityReviewModel.m */; };
+		1F49FBAD1BCBDB6400FD0014 /* NZCommentViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49FBAC1BCBDB6400FD0014 /* NZCommentViewModel.m */; };
+		1F49FBB21BCBE0F400FD0014 /* NZActivityReviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F49FBB11BCBE0F400FD0014 /* NZActivityReviewCell.m */; };
 		1F4A9ECC1BA65F5F005E8C33 /* NZBillingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4A9ECA1BA65F5F005E8C33 /* NZBillingViewController.m */; };
 		1F4A9ECD1BA65F5F005E8C33 /* NZBillingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F4A9ECB1BA65F5F005E8C33 /* NZBillingViewController.xib */; };
 		1F4A9ED21BA66F4C005E8C33 /* NZBillingViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4A9ED01BA66F4C005E8C33 /* NZBillingViewCell.m */; };
@@ -373,6 +377,14 @@
 		1F49C6251B7B41DB006532B7 /* NZUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZUserManager.m; sourceTree = "<group>"; };
 		1F49C6271B7B41E8006532B7 /* NZUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZUser.h; sourceTree = "<group>"; };
 		1F49C6281B7B41E8006532B7 /* NZUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZUser.m; sourceTree = "<group>"; };
+		1F49FBA51BCBBC9300FD0014 /* NZActivityReviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZActivityReviewController.h; sourceTree = "<group>"; };
+		1F49FBA61BCBBC9300FD0014 /* NZActivityReviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZActivityReviewController.m; sourceTree = "<group>"; };
+		1F49FBA81BCBD15D00FD0014 /* ActivityReviewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityReviewModel.h; sourceTree = "<group>"; };
+		1F49FBA91BCBD15D00FD0014 /* ActivityReviewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityReviewModel.m; sourceTree = "<group>"; };
+		1F49FBAB1BCBDB6400FD0014 /* NZCommentViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZCommentViewModel.h; sourceTree = "<group>"; };
+		1F49FBAC1BCBDB6400FD0014 /* NZCommentViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZCommentViewModel.m; sourceTree = "<group>"; };
+		1F49FBB01BCBE0F400FD0014 /* NZActivityReviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZActivityReviewCell.h; sourceTree = "<group>"; };
+		1F49FBB11BCBE0F400FD0014 /* NZActivityReviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZActivityReviewCell.m; sourceTree = "<group>"; };
 		1F4A9EC91BA65F5F005E8C33 /* NZBillingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZBillingViewController.h; sourceTree = "<group>"; };
 		1F4A9ECA1BA65F5F005E8C33 /* NZBillingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZBillingViewController.m; sourceTree = "<group>"; };
 		1F4A9ECB1BA65F5F005E8C33 /* NZBillingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NZBillingViewController.xib; sourceTree = "<group>"; };
@@ -792,6 +804,8 @@
 			children = (
 				1F382DDD1BBBCA130033177C /* NZActivityViewController.h */,
 				1F382DDE1BBBCA130033177C /* NZActivityViewController.m */,
+				1F49FBA51BCBBC9300FD0014 /* NZActivityReviewController.h */,
+				1F49FBA61BCBBC9300FD0014 /* NZActivityReviewController.m */,
 			);
 			name = "活动详情";
 			sourceTree = "<group>";
@@ -1152,6 +1166,8 @@
 				1F5A3AE01BB3CFCC006D06EB /* LoveModel.m */,
 				1F382DE01BBBCFE70033177C /* ActivityDetailModel.h */,
 				1F382DE11BBBCFE70033177C /* ActivityDetailModel.m */,
+				1F49FBA81BCBD15D00FD0014 /* ActivityReviewModel.h */,
+				1F49FBA91BCBD15D00FD0014 /* ActivityReviewModel.m */,
 			);
 			path = "恋着";
 			sourceTree = "<group>";
@@ -1199,6 +1215,7 @@
 		1F49C62F1B7B4389006532B7 /* 恋着 */ = {
 			isa = PBXGroup;
 			children = (
+				1F49FBAF1BCBE0E800FD0014 /* TableViewCell */,
 				1F9ECD551B7D8CA900810B7D /* NZLoveController.h */,
 				1F9ECD561B7D8CA900810B7D /* NZLoveController.m */,
 				1F4771851B9D8AC40001D14C /* NZLoveContentView.h */,
@@ -1266,6 +1283,8 @@
 		1F49C6341B7B4389006532B7 /* 恋着 */ = {
 			isa = PBXGroup;
 			children = (
+				1F49FBAB1BCBDB6400FD0014 /* NZCommentViewModel.h */,
+				1F49FBAC1BCBDB6400FD0014 /* NZCommentViewModel.m */,
 			);
 			path = "恋着";
 			sourceTree = "<group>";
@@ -1401,6 +1420,15 @@
 				1F4B36B21BA009BC009C3907 /* 活动图4.png */,
 			);
 			path = resource;
+			sourceTree = "<group>";
+		};
+		1F49FBAF1BCBE0E800FD0014 /* TableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				1F49FBB01BCBE0F400FD0014 /* NZActivityReviewCell.h */,
+				1F49FBB11BCBE0F400FD0014 /* NZActivityReviewCell.m */,
+			);
+			path = TableViewCell;
 			sourceTree = "<group>";
 		};
 		1F4A9ECE1BA66F09005E8C33 /* TableViewCell */ = {
@@ -2273,6 +2301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F49FBB21BCBE0F400FD0014 /* NZActivityReviewCell.m in Sources */,
 				1F49C6211B7B409C006532B7 /* ViewController.m in Sources */,
 				1F7AE26C1B7CB043008A26EA /* UIDevice+Category.m in Sources */,
 				1F66D6791B96A7B0007CFF94 /* NZPrivilegeViewController.m in Sources */,
@@ -2301,6 +2330,7 @@
 				1F4B36B91BA00C6A009C3907 /* NZNewProductViewCell.m in Sources */,
 				1F645AB81B95732D001CBC20 /* NZOrderViewCell.m in Sources */,
 				1F9ECD5A1B7D8E7600810B7D /* NZTakeController.m in Sources */,
+				1F49FBAA1BCBD15D00FD0014 /* ActivityReviewModel.m in Sources */,
 				1F4771701B9C14CD0001D14C /* NZCustomerServiceViewController.m in Sources */,
 				1F7F16A61BA84CA80089E3FB /* NZRegistSecondViewController.m in Sources */,
 				1F7AE2711B7CB043008A26EA /* UITableView+Category.m in Sources */,
@@ -2387,6 +2417,7 @@
 				1F3D79ED1BAD75BF00894AB5 /* MyWalletModel.m in Sources */,
 				1F3FF2AA1BB97475007AA014 /* NZOrderViewModel.m in Sources */,
 				1F3BDE8E1BAAFC33001648EE /* ServiceReplyModel.m in Sources */,
+				1F49FBA71BCBBC9300FD0014 /* NZActivityReviewController.m in Sources */,
 				1F49C6201B7B409C006532B7 /* main.m in Sources */,
 				4FFB32561BCB5F0600306AFD /* RSADataSigner.m in Sources */,
 				1F49C61D1B7B409C006532B7 /* AppDelegate.m in Sources */,
@@ -2417,6 +2448,7 @@
 				1F3D79F01BAD83F900894AB5 /* BillingRecordModel.m in Sources */,
 				1F70DD131BA2F69E009266C7 /* NZShopBagExpendViewCell.m in Sources */,
 				1F9ECD601B7D8EDE00810B7D /* NZStrollController.m in Sources */,
+				1F49FBAD1BCBDB6400FD0014 /* NZCommentViewModel.m in Sources */,
 				1F6EB8001BB2830000CD8B93 /* MessageNumberModel.m in Sources */,
 				1F7AE26D1B7CB043008A26EA /* UIImage+Category.m in Sources */,
 			);

@@ -33,6 +33,7 @@
 #define tintOrangeColor [UIColor colorWithRed:236/255.f green:108/255.f blue:0/255.f alpha:1.0] // 橘黄色（保存按钮）
 #define toolBarColor [UIColor colorWithRed:241/255.f green:241/255.f blue:241/255.f alpha:1.0] // 顶部44分类工具条颜色
 #define orderBarColor [UIColor colorWithRed:204/255.f green:161/255.f blue:106/255.f alpha:1.0] //
+#define coffeeColor [UIColor colorWithRed:163/255.f green:105/255.f blue:68/255.f alpha:1.0] //
 
 #define UIDefaultBackImage       [UIImage imageNamed:@"返回按钮"]
 #define scanCodeImage            [UIImage imageNamed:@"扫码"]

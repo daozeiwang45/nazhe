@@ -257,4 +257,18 @@
     return timeString;
 }
 
+// 判断字符串不为空的方法
++ (BOOL) isNotBlankString:(NSString *)string {
+    if (string == nil || string == NULL) {
+        return NO;
+    }
+    if ([string isKindOfClass:[NSNull class]]) {
+        return NO;
+    }
+    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0) {
+        return NO;
+    }
+    return YES;
+}
+
 @end
