@@ -9,8 +9,10 @@
 #import "NZActivityViewController.h"
 #import "ActivityDetailModel.h"
 #import "NZActivityReviewController.h"
+#import "NZLoginViewController.h"
+#import "NZCommodityDetailController.h"
 
-@interface NZActivityViewController () {
+@interface NZActivityViewController ()<UIAlertViewDelegate> {
     ActivityDetailModel *activityDetailModel; // 活动详情页数据模型
     
     UIScrollView *scrollView; // 所有内容放到这里面去
@@ -22,6 +24,8 @@
     UILabel *acContentLab; // 活动内容
     
     UIView *goodView; // 商品信息存放载体，可重复利用
+    
+    UILabel *likeLab; // 点赞label
 }
 
 @end
@@ -178,6 +182,8 @@
                  detailBtn.layer.masksToBounds = YES;
                  detailBtn.layer.borderWidth = 1.f;
                  detailBtn.layer.borderColor = coffeeColor.CGColor;
+                 [detailBtn addTarget:self action:@selector(goodDetailClick:) forControlEvents:UIControlEventTouchUpInside];
+                 objc_setAssociatedObject(detailBtn, "goodID", [NSNumber numberWithInt:acGoodModel.goodID], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
                  [goodView addSubview:detailBtn];
                  
                  goodView.frame = CGRectMake(ScreenWidth*25/375, startY, ScreenWidth-ScreenWidth*50/375, CGRectGetMaxY(hotLabel.frame));
@@ -203,7 +209,7 @@
              [likeBtn addTarget:self action:@selector(likeClick:) forControlEvents:UIControlEventTouchUpInside];
              [scrollView addSubview:likeBtn];
              
-             UILabel *likeLab = [[UILabel alloc] initWithFrame:CGRectMake(commentLab.origin.x-ScreenWidth*100/375, CGRectGetMaxY(likeBtn.frame)+5, ScreenWidth*100/375, 15.f)];
+             likeLab = [[UILabel alloc] initWithFrame:CGRectMake(commentLab.origin.x-ScreenWidth*100/375, CGRectGetMaxY(likeBtn.frame)+5, ScreenWidth*100/375, 15.f)];
              likeLab.text = [NSString stringWithFormat:@"%d 赞", activityModel.countPraise];
              likeLab.textColor = [UIColor grayColor];
              likeLab.font = [UIFont systemFontOfSize:13.f];
@@ -231,44 +237,84 @@
      }] ;
 }
 
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {
+        alertView = nil;
+    } else {
+        alertView = nil;
+        NZLoginViewController *loginVCTR = [[NZLoginViewController alloc] init];
+        [self.navigationController pushViewController:loginVCTR animated:YES];
+    }
+}
+
 #pragma mark 点赞或取消
 - (void)likeClick:(UIButton *)button {
-    __weak typeof(self)wSelf = self ;
     
-    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
-    
-    NZUser *user = [NZUserManager sharedObject].user;
-    
-    NSDictionary *parameters = @{
-                                 @"userId":user.userId,
-                                 @"id":user.userId
-                                 } ;
-    
-    [handler postURLStr:webActivityLike postDic:parameters
-                  block:^(NSDictionary *retInfo, NSError *error)
-     {
-         if( error )
+    NZFastOperate *fastOpt = [NZFastOperate sharedObject];
+    if (fastOpt.isLogin) {
+        
+        __weak typeof(self)wSelf = self ;
+        
+        NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+        
+        NZUser *user = [NZUserManager sharedObject].user;
+        
+        NSDictionary *parameters = @{
+                                     @"userId":user.userId,
+                                     @"id":[NSNumber numberWithInt:self.activityID]
+                                     } ;
+        
+        [handler postURLStr:webActivityLike postDic:parameters
+                      block:^(NSDictionary *retInfo, NSError *error)
          {
-             [wSelf.view makeToast:@"网络错误"];
-             return ;
-         }
-         if( retInfo == nil )
-         {
-             [wSelf.view makeToast:@"网络错误"];
-             return ;
-         }
-         
-         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
-         
-         if( state )
-         {
+             if( error )
+             {
+                 [wSelf.view makeToast:@"网络错误"];
+                 return ;
+             }
+             if( retInfo == nil )
+             {
+                 [wSelf.view makeToast:@"网络错误"];
+                 return ;
+             }
              
-         }
-         else
-         {
-             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
-         }
-     }] ;
+             BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+             
+             if( state )
+             {
+                 if (activityDetailModel.activity.isPraise) {
+                     activityDetailModel.activity.countPraise -= 1;
+                     likeLab.text = [NSString stringWithFormat:@"%d 赞", activityDetailModel.activity.countPraise];
+                     activityDetailModel.activity.isPraise = !activityDetailModel.activity.isPraise;
+                     [wSelf.view makeToast:@"取消点赞"] ;
+                 } else {
+                     activityDetailModel.activity.countPraise += 1;
+                     likeLab.text = [NSString stringWithFormat:@"%d 赞", activityDetailModel.activity.countPraise];
+                     activityDetailModel.activity.isPraise = !activityDetailModel.activity.isPraise;
+                     [wSelf.view makeToast:@"点赞成功"] ;
+                 }
+             }
+             else
+             {
+                 [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+             }
+         }] ;
+        
+    } else {
+        UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"您未登录" message:@"是否现在登录" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"登录", nil];
+        [alertview show];
+    }
+}
+
+#pragma mark 进入商品详情界面
+- (void)goodDetailClick:(UIButton *)button {
+    int goodID = [objc_getAssociatedObject(button, "goodID") intValue];
+    // 跳转商品详情页面
+    NZCommodityDetailController *commodityDetailVCTR = [[NZCommodityDetailController alloc] init];
+    commodityDetailVCTR.goodID = goodID;
+    [self.navigationController pushViewController:commodityDetailVCTR animated:YES];
 }
 
 #pragma mark 进入活动评论界面

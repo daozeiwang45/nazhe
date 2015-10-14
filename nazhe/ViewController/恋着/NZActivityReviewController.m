@@ -17,13 +17,16 @@
     
     ActivityReviewModel *activityReviewModel; // 评论列表数据
     NSMutableArray *commentVMArray; // 评论试图模型数组
+    int pageNo; // 列表请求页码
     
     UITextField *textComment; // 评论输入框
     UIButton *btnComment; // 评论按钮
     
     UIAlertView *loginAlertview;
     UIAlertView *deleteAlertview;
+    int deleteIndex;
     int deleteCommentID;
+    BOOL isLoginAlertview;
 }
 
 @end
@@ -35,6 +38,7 @@
     self = [super init];
     if (self) {
         commentVMArray = [NSMutableArray array];
+        pageNo = 1;
     }
     return self;
 }
@@ -85,7 +89,13 @@
     [viewFoot addSubview:textComment];
     [self.view addSubview:viewFoot];
     
-    [self requestReviewListData];
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadNewData方法）
+    reviewTableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadMoreData方法）
+    reviewTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+    // 马上进入刷新状态
+    [reviewTableView.header beginRefreshing];
+    
 }
 
 #pragma mark UITableViewDataSource
@@ -149,7 +159,7 @@
         alertView = nil;
     } else {
         alertView = nil;
-        if ([alertView isEqual:loginAlertview]) {
+        if (isLoginAlertview) {
             NZLoginViewController *loginVCTR = [[NZLoginViewController alloc] init];
             [self.navigationController pushViewController:loginVCTR animated:YES];
         } else {
@@ -157,9 +167,9 @@
             
             NZWebHandler *handler = [[NZWebHandler alloc] init] ;
             
-            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            
-            hud.labelText = @"请稍候..." ;
+//            MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+//            
+//            hud.labelText = @"请稍候..." ;
             
             NZUser *user = [NZUserManager sharedObject].user;
             
@@ -171,7 +181,7 @@
             [handler postURLStr:webDeleteActivityReview postDic:parameters
                           block:^(NSDictionary *retInfo, NSError *error)
              {
-                 [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+//                 [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
                  
                  if( error )
                  {
@@ -189,7 +199,8 @@
                  if( state )
                  {
                      [wSelf.view makeToast:@"删除成功！"];
-                     [self requestReviewListData];
+                     [commentVMArray removeObjectAtIndex:deleteIndex];
+                     [reviewTableView reloadData];
                  }
                  else
                  {
@@ -215,16 +226,27 @@
     
     NZUser *user = [NZUserManager sharedObject].user;
     
-    NSLog(@"%@",user.userId);
-    NSLog(@"%d",commentVM.review.friendId);
-    
-    if (commentVM.review.friendId == (int)user.userId) {
+    if ([[NSString stringWithFormat:@"%d",commentVM.review.friendId] isEqualToString:user.userId]) {
         
+        deleteIndex = index;
         deleteCommentID = commentVM.review.commentId;
         
         deleteAlertview = [[UIAlertView alloc] initWithTitle:nil message:@"确认删除该评论" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        isLoginAlertview = NO;
         [deleteAlertview show];
     }
+}
+
+#pragma mark 下拉刷新
+- (void)loadNewData {
+    pageNo = 1;
+    [self requestReviewListData];
+}
+
+#pragma mark 上拉加载
+- (void)loadMoreData {
+    pageNo += 1;
+    [self requestReviewListData];
 }
 
 #pragma mark 请求评论列表数据
@@ -233,22 +255,14 @@
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    hud.labelText = @"请稍候..." ;
-    
-    NZUser *user = [NZUserManager sharedObject].user;
-    
     NSDictionary *parameters = @{
-                                 @"userId":user.userId,
-                                 @"id":[NSNumber numberWithInt:self.activityID]
+                                 @"id":[NSNumber numberWithInt:self.activityID],
+                                 @"pageNo":[NSNumber numberWithInt:pageNo]
                                  } ;
     
     [handler postURLStr:webActivityReviewList postDic:parameters
                   block:^(NSDictionary *retInfo, NSError *error)
      {
-         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
-         
          if( error )
          {
              [wSelf.view makeToast:@"网络错误"];
@@ -266,7 +280,9 @@
          {
              activityReviewModel = [ActivityReviewModel objectWithKeyValues:retInfo[@"result"]];
              
-             [commentVMArray removeAllObjects];
+             if (pageNo == 1) {
+                 [commentVMArray removeAllObjects];
+             }
              
              for (int i=0 ; i<activityReviewModel.list.count; i++) {
                  NZCommentViewModel *commentVM = [[NZCommentViewModel alloc] init];
@@ -274,8 +290,21 @@
                  [commentVMArray addObject:commentVM];
              }
              
+             // 结束刷新
+             [reviewTableView.header endRefreshing];
+             [reviewTableView.footer endRefreshing];
+             
              [reviewTableView reloadData];
-             reviewTableView.contentOffset = CGPointMake(0, -64);
+             if (pageNo == 1) {
+                 reviewTableView.contentOffset = CGPointMake(0, -64);
+             }
+             
+             if (pageNo == activityReviewModel.page_count) {
+//                 [reviewTableView.footer noticeNoMoreData];
+                 reviewTableView.footer.hidden = YES;
+             }
+
+             
          }
          else
          {
@@ -287,77 +316,75 @@
 #pragma mark 评论
 - (void)btnCommentClick:(UIButton *)button {
     
-    NZFastOperate *fastOpt = [NZFastOperate sharedObject];
-    if (fastOpt.isLogin) {
-        
-        __weak typeof(self)wSelf = self ;
-        
-        NZWebHandler *handler = [[NZWebHandler alloc] init] ;
-        
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        hud.labelText = @"请稍候..." ;
-        
-        NZUser *user = [NZUserManager sharedObject].user;
-        
-        int friendId = [objc_getAssociatedObject(button, "friendId") intValue];
-        
-        NSDictionary *parameters;
-        
-        if (friendId == -1 || friendId == [user.userId intValue]) {
-            parameters = @{
-                           @"userId":user.userId,
-                           @"id":[NSNumber numberWithInt:self.activityID],
-                           @"content":textComment.text
-                           } ;
-        } else {
-            parameters = @{
-                           @"userId":user.userId,
-                           @"id":[NSNumber numberWithInt:self.activityID],
-                           @"friendId":[NSNumber numberWithInt:friendId],
-                           @"content":textComment.text
-                           } ;
-        }
-        
-        [handler postURLStr:webActivityReview postDic:parameters
-                      block:^(NSDictionary *retInfo, NSError *error)
-         {
-             [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
-             
-             if( error )
-             {
-                 [wSelf.view makeToast:@"网络错误"];
-                 return ;
-             }
-             if( retInfo == nil )
-             {
-                 [wSelf.view makeToast:@"网络错误"];
-                 return ;
-             }
-             
-             BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
-             
-             if( state )
-             {
-                 [wSelf.view makeToast:@"评论成功！"];
-                 [self requestReviewListData];
-                 
-                 textComment.text = @"";
-                 [textComment resignFirstResponder];
-                 
-             }
-             else
-             {
-                 [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
-             }
-         }] ;
-        
+    if ([textComment.text isEqualToString:@""]) {
+        [self.view makeToast:@"评论不能为空"];
     } else {
-        loginAlertview = [[UIAlertView alloc] initWithTitle:@"您未登录" message:@"是否现在登录" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"登录", nil];
-        [loginAlertview show];
+        NZFastOperate *fastOpt = [NZFastOperate sharedObject];
+        if (fastOpt.isLogin) {
+            
+            __weak typeof(self)wSelf = self ;
+            
+            NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+            
+            NZUser *user = [NZUserManager sharedObject].user;
+            
+            int friendId = [objc_getAssociatedObject(button, "friendId") intValue];
+            
+            NSDictionary *parameters;
+            
+            if (friendId == -1 || friendId == [user.userId intValue]) {
+                parameters = @{
+                               @"userId":user.userId,
+                               @"id":[NSNumber numberWithInt:self.activityID],
+                               @"content":textComment.text
+                               } ;
+            } else {
+                parameters = @{
+                               @"userId":user.userId,
+                               @"id":[NSNumber numberWithInt:self.activityID],
+                               @"friendId":[NSNumber numberWithInt:friendId],
+                               @"content":textComment.text
+                               } ;
+            }
+            
+            [handler postURLStr:webActivityReview postDic:parameters
+                          block:^(NSDictionary *retInfo, NSError *error)
+             {
+                 if( error )
+                 {
+                     [wSelf.view makeToast:@"网络错误"];
+                     return ;
+                 }
+                 if( retInfo == nil )
+                 {
+                     [wSelf.view makeToast:@"网络错误"];
+                     return ;
+                 }
+                 
+                 BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+                 
+                 if( state )
+                 {
+                     [wSelf.view makeToast:@"评论成功！"];
+                     pageNo = 1;
+                     [self requestReviewListData];
+                     
+                     textComment.text = @"";
+                     [textComment resignFirstResponder];
+                     
+                 }
+                 else
+                 {
+                     [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+                 }
+             }] ;
+            
+        } else {
+            loginAlertview = [[UIAlertView alloc] initWithTitle:@"您未登录" message:@"是否现在登录" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"登录", nil];
+            isLoginAlertview = YES;
+            [loginAlertview show];
+        }
     }
-    
-    
 }
 
 

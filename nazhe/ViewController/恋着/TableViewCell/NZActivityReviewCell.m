@@ -175,7 +175,11 @@
 
 #pragma mark 长按1秒删除
 - (void)longPressAction:(UIGestureRecognizer *)sender {
-    [self.delegate deleteWithIndex:self.index];
+    
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self.delegate deleteWithIndex:self.index];
+    }
+    
 }
 
 - (void)awakeFromNib {
