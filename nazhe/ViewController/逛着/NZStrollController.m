@@ -916,6 +916,12 @@
                 cell = [[[NSBundle mainBundle] loadNibNamed:@"NZGrabViewCell" owner:self options:nil] lastObject] ;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
+            
+            // 给马上抢添加点击方法 ---------------
+            UITapGestureRecognizer *quicklyViewTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(quicklyViewSingleTapAction:)];
+            
+            [cell.quicklyView addGestureRecognizer:quicklyViewTap];
+            
             //图片地址
             NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"SmallNewsImg"]];
             NSURL *imgURL = [NSURL URLWithString:smallImg];
@@ -1688,6 +1694,11 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
 //    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    
+}
+
+#pragma mark   点击马上抢跳转方法
+-(void)quicklyViewSingleTapAction:(UIGestureRecognizer *)gestureRecognizer{
     
 }
 
