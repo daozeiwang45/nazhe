@@ -26,6 +26,10 @@ extern NSString *webRegister; // 注册接口
 
 extern NSString *webLoveFirstPage; // 恋着首页接口
 extern NSString *webActivityDetail; // 活动详情页接口
+extern NSString *webActivityLike; // 活动点赞接口
+extern NSString *webActivityReviewList; // 活动评论列表接口
+extern NSString *webActivityReview; // 活动评论接口
+extern NSString *webDeleteActivityReview; // 删除活动评论接口
 
 extern NSString *webStrollFirstPage; // 逛着首页材质列表接口
 extern NSString *webGetStyleList; // 逛着首页款式列表接口
@@ -120,6 +124,11 @@ extern NSString *NZSystemMessageTypeCellIdentify;
 extern NSString *NZMessageCollectionTypeCellIdentify;
 extern NSString *NZMessageViewCellIdentify;
 extern NSString *NZMessageExpendViewCellIdentify;
+
+// 活动评论cell(有回复对象)
+extern NSString *NZActivityFriendReviewCellIdentify;
+// 活动评论cell
+extern NSString *NZActivityReviewCellIdentify;
 
 @interface NZExtern : NSObject
 

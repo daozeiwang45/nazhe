@@ -26,6 +26,10 @@ NSString *webRegister = @"Client/Register"; // 注册接口
 
 NSString *webLoveFirstPage = @"LianZhe/List"; // 恋着首页接口
 NSString *webActivityDetail = @"lianzhe/ActivityDetail"; // 活动详情页接口
+NSString *webActivityLike = @"lianzhe/ActivityPraise"; // 活动点赞接口
+NSString *webActivityReviewList = @"lianzhe/ActivityCommentList"; // 活动评论列表接口
+NSString *webActivityReview = @"lianzhe/ActivityComment"; // 活动评论接口
+NSString *webDeleteActivityReview = @"lianzhe/ActivityCommentDel"; // 删除活动评论接口
 
 NSString *webStrollFirstPage = @"Goods/GetCategory"; // 逛着首页材质列表接口
 NSString *webGetStyleList = @"Goods/GetStyle"; // 逛着首页款式列表接口
@@ -120,6 +124,11 @@ NSString *NZSystemMessageTypeCellIdentify = @"NZSystemMessageTypeCellIdentify";
 NSString *NZMessageCollectionTypeCellIdentify = @"NZMessageCollectionTypeCellIdentify";
 NSString *NZMessageViewCellIdentify = @"NZMessageViewCellIdentify";
 NSString *NZMessageExpendViewCellIdentify = @"NZMessageExpendViewCellIdentify";
+
+// 活动评论cell(有回复对象)
+NSString *NZActivityFriendReviewCellIdentify = @"NZActivityFriendReviewCellIdentify";
+// 活动评论cell
+NSString *NZActivityReviewCellIdentify = @"NZActivityReviewCellIdentify";
 
 @implementation NZExtern
 

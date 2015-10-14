@@ -68,4 +68,7 @@
 // 一个时间距现在的时间
 + (NSString *)intervalSinceNow: (NSString *) theDate;
 
+// 判断字符串不为空的方法
++ (BOOL) isNotBlankString:(NSString *)string;
+
 @end

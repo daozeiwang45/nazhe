@@ -337,9 +337,13 @@
 }
 
 - (void)registJump:(UIButton *)button {
-    NZRegistFirstViewController *registVCTR = [[NZRegistFirstViewController alloc] init];
-    registVCTR.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:registVCTR animated:YES];
+//    NZRegistFirstViewController *registVCTR = [[NZRegistFirstViewController alloc] init];
+//    registVCTR.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:registVCTR animated:YES];
+    NZActivityViewController *activityVCTR = [[NZActivityViewController alloc] init];
+    activityVCTR.activityID = 1;
+    activityVCTR.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:activityVCTR animated:YES];
 }
 
 #pragma mark 幸运星辰界面布局
@@ -577,10 +581,12 @@
              
              // 轮播活动id手动添 然后把轮播图片数组取出来
              NSMutableArray *imagesURL = [NSMutableArray array];
+             NSMutableArray *idArray = [NSMutableArray array];
              for (int i=0; i<loveModel.activityList.count; i++) {
                  BrandModel *brandModel = loveModel.activityList[i];
                  brandModel.brandID = [retInfo[@"activityList"][i][@"id"] intValue];
                  [imagesURL addObject:[NZGlobal GetImgBaseURL:brandModel.bgImg]];
+                 [idArray addObject:[NSNumber numberWithInt:brandModel.brandID]];
              }
              
              // 新品汇数据因为凯哥参数new开头的原因，手动转，花费时间15分钟
@@ -669,6 +675,7 @@
              {
 //                 NSLog(@"被点中图片的索引:%ld---地址:%@",index,imageURL);
                  NZActivityViewController *activityVCTR = [[NZActivityViewController alloc] init];
+                 activityVCTR.activityID = [idArray[index] intValue];
                  activityVCTR.hidesBottomBarWhenPushed = YES;
                  [wSelf.navigationController pushViewController:activityVCTR animated:YES];
              };

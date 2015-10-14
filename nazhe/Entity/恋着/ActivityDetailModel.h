@@ -38,6 +38,10 @@
  *  活动分享数
  */
 @property (nonatomic, assign) int countShare;
+/**
+ *  是否赞过
+ */
+@property (nonatomic, assign) BOOL isPraise;
 
 @end
 
