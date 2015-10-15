@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) IBOutlet UIImageView *productImageV;
 @property (strong, nonatomic) IBOutlet UIView *quicklyView;
+@property (weak, nonatomic) IBOutlet UIButton *quicklyButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *grabTittleLab;
 @property (weak, nonatomic) IBOutlet UILabel *nowPriceLab;

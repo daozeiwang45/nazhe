@@ -124,6 +124,7 @@
                 <outlet property="marketPriceLab" destination="1pJ-B8-otC" id="7Fq-6Q-ibI"/>
                 <outlet property="nowPriceLab" destination="Kaa-Zi-0kb" id="rcA-QC-6ya"/>
                 <outlet property="productImageV" destination="bdC-2i-Qdr" id="C8q-h7-N3Y"/>
+                <outlet property="quicklyButton" destination="Eqi-CH-laZ" id="svT-rt-KeA"/>
                 <outlet property="quicklyView" destination="46u-0F-6Nj" id="b0y-Ca-UWy"/>
             </connections>
             <point key="canvasLocation" x="484.5" y="560"/>

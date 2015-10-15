@@ -8,6 +8,7 @@
 
 #import "NZMajorSuitViewController.h"
 #import "NZNewProductViewCell.h"
+#import "NZCommodityDetailController.h"
 
 #define labelFont [UIFont systemFontOfSize:10.f]
 #define labelTextColor [UIColor colorWithRed:161/255.f green:105/255.f blue:68/255.f alpha:1.0]
@@ -16,6 +17,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
+@property (strong,nonatomic) UIImageView *brandImgView;
 
 @end
 
@@ -27,12 +29,23 @@
     [self createNavigationItemTitleViewWithTitle:@"大牌档"];
     [self leftButtonTitle:nil];
     
+    self.pageNo = 0;
+    
+    self.majorSuitDetailInfoArry = [NSMutableArray new];
+    self.majorSuitDetailShopInfoDict = [NSMutableDictionary new];
+    
     [self requestData];
+    //加载大牌档数据
+    _tableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestData)];
+    // 马上进入刷新状态
+    [_tableView.footer beginRefreshing];
+    
 }
 
 #pragma mark  请求数据
 -(void) requestData{
     
+    self.pageNo +=1;
     __weak typeof(self)wSelf = self ;
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
@@ -41,6 +54,7 @@
     
     hud.labelText = @"请稍候..." ;
     NSDictionary *parameters = @{
+                                 @"page_no":[NSNumber numberWithInt:self.pageNo],
                                  @"userId":[NSNumber numberWithInt:6],
                                  @"shopId":[NSNumber numberWithInt:3]
                                  
@@ -65,18 +79,28 @@
          BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
          if( state )
          {
-            
-             self.majorSuitDetailInfoArry = [NSMutableArray new];
-             self.majorSuitDetailShopInfoDict = [NSMutableDictionary new];
-             //把基本信息majorSuitDetailInfoArry
-             self.majorSuitDetailShopInfoDict = [retInfo objectForKey:@"shopInfo"];
-             self.majorSuitDetailInfoArry = [retInfo objectForKey:@"isRecomment"];
+             [_tableView.footer endRefreshing];
+             NSArray *infoArry = [[retInfo objectForKey:@"result"]objectForKey:@"goodsList"];
              
-             self.hotStr = [retInfo objectForKey:@"hotCount"];
-             self.topicStr = [retInfo objectForKey:@"topicCount"];
-             self.showStr = [retInfo objectForKey:@"showCount"];
-             self.shareStr = [retInfo objectForKey:@"shoreCount"];
-             [self initInface];
+             if (infoArry.count > 0) {
+             
+                 //把基本信息majorSuitDetailInfoArry
+                 self.majorSuitDetailShopInfoDict = [retInfo objectForKey:@"shopInfo"];
+                 [self.majorSuitDetailInfoArry addObjectsFromArray:infoArry];
+                 
+                 self.hotStr = [retInfo objectForKey:@"hotCount"];
+                 self.topicStr = [retInfo objectForKey:@"topicCount"];
+                 self.showStr = [retInfo objectForKey:@"showCount"];
+                 self.shareStr = [retInfo objectForKey:@"shoreCount"];
+                 
+                 [self initInface];
+                 [_tableView reloadData];
+
+             }else{
+                 
+                 _tableView.footer.hidden = YES;
+             }
+             
          }
          else
          {
@@ -94,21 +118,21 @@
     _tableView.backgroundColor = UIDefaultBackgroundColor;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableView.showsVerticalScrollIndicator = NO;
-    
+
     // 大牌档头部广告标识
     UIView *tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*225/375)];
     tableHeaderView.backgroundColor = [UIColor whiteColor];
     
-    UIImageView *brandImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*150/375)];
+    _brandImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*150/375)];
     //图片地址
     NSString *imgStr =[NZGlobal GetImgBaseURL:[self.majorSuitDetailShopInfoDict objectForKey:@"bgImg"]];
     NSURL *imgURL = [NSURL URLWithString:imgStr];
-    [brandImgView sd_setImageWithURL:imgURL placeholderImage:defaultImage];
+    [_brandImgView sd_setImageWithURL:imgURL placeholderImage:defaultImage];
     
-    [tableHeaderView addSubview:brandImgView];
+    [tableHeaderView addSubview:_brandImgView];
     
     // 大牌档工具条
-    UIView *toolBarView = [[UIView alloc] initWithFrame:CGRectMake(20, CGRectGetMaxY(brandImgView.frame), ScreenWidth-40, ScreenWidth*75/375)];
+    UIView *toolBarView = [[UIView alloc] initWithFrame:CGRectMake(20, CGRectGetMaxY(_brandImgView.frame), ScreenWidth-40, ScreenWidth*75/375)];
     toolBarView.backgroundColor = [UIColor whiteColor];
     [tableHeaderView addSubview:toolBarView];
     
@@ -203,6 +227,9 @@
 //    cell.rightGrabIcon.image = [UIImage imageNamed:@"立即抢购"];
 
     //---------左边--------
+    cell.leftButton.tag = [[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2]objectForKey:@"goodsId"] integerValue];
+    [cell.leftButton addTarget:self action:@selector(goToBuyAction:) forControlEvents:UIControlEventTouchUpInside];
+
     //图片地址
     NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2] objectForKey:@"img"]];
     
@@ -216,6 +243,8 @@
         cell.rightView.hidden = YES;
     }else{
         
+        cell.rightButton.tag = [[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2+1]objectForKey:@"goodsId"] integerValue];
+        [cell.rightButton addTarget:self action:@selector(goToBuyAction:) forControlEvents:UIControlEventTouchUpInside];
         //图片地址
         NSString *smallImg1 =[NZGlobal GetImgBaseURL:[[self.majorSuitDetailInfoArry objectAtIndex:indexPath.row*2+1] objectForKey:@"img"]];
         NSURL *imgURL1 = [NSURL URLWithString:smallImg1];
@@ -241,5 +270,16 @@
     
 }
 
+
+#pragma mark   点击大牌档产品--跳转方法
+-(void)goToBuyAction:(UIButton *)sender{
+    
+    // 跳转商品详情页面
+    NZCommodityDetailController *commodityDetailVCTR = [[NZCommodityDetailController alloc] init];
+    commodityDetailVCTR.goodID = (int)sender.tag;
+    commodityDetailVCTR.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:commodityDetailVCTR animated:YES];
+    
+}
 
 @end

@@ -20,6 +20,7 @@
 #import "MaterialListModel.h"
 #import "StyleListModel.h"
 #import "PasspParametersModel.h"
+#import "NZCommodityDetailController.h"
 
 #define styleButtonTag 100
 #define varietyButtonTag 1000
@@ -135,6 +136,13 @@
 #pragma mark 初始化优惠活动tableview
 - (void)initActivitiesAllInterface {
     
+    self.imagesURLInActivitiesArry = [NSMutableArray new];
+    self.activitiesTimeDetailInfoArry = [NSMutableArray new];
+    self.imagesOtherURLInActivitiesArry = [NSMutableArray new];
+    self.activitiesNewDetailInfoArry = [NSMutableArray new];
+    self.activitiesCouponsDetailInfoArry = [NSMutableArray new];
+    self.activitiesMajorSuitDetailInfoArry = [NSMutableArray new];
+    
     _acType = enumtActivitiesType_Grab; // 首先展示限时抢活动界面
     
     _activityTableView.dataSource = self;
@@ -145,11 +153,9 @@
     _activityTableView.bounces = NO;
     
     _tableHeaderView = [[UIView alloc] init];
-    _adView = [AdView new];
 //    /****************************   广告轮播   *******************************/
-    
     _adView = [AdView adScrollViewWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth * 225/375)  \
-                               imageLinkURL:self.imagesURLInActivitiesArry\
+                               imageLinkURL:nil\
                         placeHoderImageName:@"默认图片" \
                        pageControlShowStyle:UIPageControlShowStyleNone];
     
@@ -260,7 +266,10 @@
     
     // 是否需要支持定时循环滚动，默认为YES
     _adView.isNeedCycleRoll = NO;
-    
+    _adView.callBack = ^(NSInteger index,NSString * imageURL)
+    {
+        NSLog(@"被点中图片的索引:%ld---地址:%@",index,imageURL);
+    };
     [_tableHeaderView addSubview:_adView];
 
     _activityTableView.tableHeaderView = _tableHeaderView;
@@ -918,9 +927,9 @@
             }
             
             // 给马上抢添加点击方法 ---------------
-            UITapGestureRecognizer *quicklyViewTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(quicklyViewSingleTapAction:)];
-            
-            [cell.quicklyView addGestureRecognizer:quicklyViewTap];
+            NSNumber *num = [[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"GoodsId"];
+            cell.quicklyButton.tag = 900+[num integerValue];
+            [cell.quicklyButton addTarget:self action:@selector(quicklyButtonAction:) forControlEvents:UIControlEventTouchUpInside];
             
             //图片地址
             NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"SmallNewsImg"]];
@@ -945,6 +954,8 @@
             //对新品汇cell进行赋值
             
             //---------左边--------
+            cell.leftButton.tag = [[[self.activitiesNewDetailInfoArry objectAtIndex:indexPath.row*2]objectForKey:@"goodsId"] integerValue];
+            [cell.leftButton addTarget:self action:@selector(goToBuyAction:) forControlEvents:UIControlEventTouchUpInside];
             //图片地址
             NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.activitiesNewDetailInfoArry objectAtIndex:indexPath.row*2] objectForKey:@"smallNewsImg"]];
             
@@ -958,7 +969,8 @@
             if (indexPath.row*2+1+1 > self.activitiesNewDetailInfoArry.count) {
                 cell.rightView.hidden = YES;
             }else{
-                
+                cell.rightButton.tag = [[[self.activitiesNewDetailInfoArry objectAtIndex:indexPath.row*2+1]objectForKey:@"goodsId"] integerValue];
+                [cell.rightButton addTarget:self action:@selector(goToBuyAction:) forControlEvents:UIControlEventTouchUpInside];
                 //图片地址
                 NSString *smallImg1 =[NZGlobal GetImgBaseURL:[[self.activitiesNewDetailInfoArry objectAtIndex:indexPath.row*2+1] objectForKey:@"smallNewsImg"]];
                 NSURL *imgURL1 = [NSURL URLWithString:smallImg1];
@@ -977,6 +989,22 @@
                 cell = [[[NSBundle mainBundle] loadNibNamed:@"NZCouponsViewCell" owner:self options:nil] lastObject] ;
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
+            
+            int state = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"state"]intValue];
+            if (state == 0) {
+               
+                cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
+                [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
+
+            }else if(state == 1){
+                
+                cell.haveLable.text = @"已领取";
+                
+            }else if (state == 2){
+                
+                cell.haveLable.text = @"已领取";
+            }
+            
             cell.backImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"couponBack%d",(int)((int)indexPath.row)%4]];
             //图片地址
             NSString *smallImg2 =[NZGlobal GetImgBaseURL:[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"img"]];
@@ -1090,12 +1118,17 @@
             expand = YES;
         }
     } else { // 优惠活动
-        
-        if (_acType == enumtActivitiesType_Coupons) {
-            
-            NSNumber *cardId = [[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"];
-            [self requestActivitiesWithHaveCoupons:cardId];
-        }
+//        
+//        if (_acType == enumtActivitiesType_Coupons) {
+//            
+//            NSNumber *cardId = [[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"];
+//            [self requestActivitiesWithHaveCoupons:cardId];
+//        }
+//        if (_acType == enumtActivitiesType_newProduct) {
+//            
+//            NSLog(@"&&&&&&&&&&--------5555");
+//        }
+
         
     }
     
@@ -1243,6 +1276,8 @@
 
 #pragma mark 请求优惠活动---限时抢---数据
 - (void)requestActivitiesWithLimitTimeData{
+    
+    self.pageNo +=1;
     __weak typeof(self)wSelf = self ;
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
@@ -1252,7 +1287,7 @@
     hud.labelText = @"请稍候..." ;
     NSDictionary *parameters = @{
                                  
-                                 @"page_no":[NSNumber numberWithInt:1]
+                                 @"page_no":[NSNumber numberWithInt:self.pageNo]
                                  
                                  };
     [handler postURLStr:webGetLimitedList postDic:parameters
@@ -1274,22 +1309,32 @@
          BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
          if( state )
          {
-             //给图片轮播图片赋值
-             self.imagesURLInActivitiesArry = [NSMutableArray new];
-             for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+             [_activityTableView.footer endRefreshing];
+             NSArray *infoArry = [[retInfo objectForKey:@"result"]objectForKey:@"detailInfo"];
+             
+             if (infoArry.count > 0) {
                  
-                 [self.imagesURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 //给图片轮播图片赋值
+                 for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+                     
+                     [self.imagesURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 }
+                 
+                 //信息初始化
+                 [self initActivitiesInterface:self.imagesURLInActivitiesArry];
+                 
+                 //把基本信息self.activitiesDetailInfoArry
+                 [self.activitiesTimeDetailInfoArry addObjectsFromArray:infoArry];
+                 
+                 [_activityTableView reloadData];
+
+             }else{
+                 //结束上拉刷新
+                 _activityTableView.footer.hidden = YES;
+                 
              }
              
-             //信息初始化
-             [self initActivitiesInterface:self.imagesURLInActivitiesArry];
-             
-             //把基本信息self.activitiesDetailInfoArry
-             self.activitiesTimeDetailInfoArry = [NSMutableArray new];
-             self.activitiesTimeDetailInfoArry = [[retInfo objectForKey:@"result"]objectForKey:@"detailInfo"];
-             
-             
-             [_activityTableView reloadData];
+         
          }
          else
          {
@@ -1299,6 +1344,8 @@
 }
 #pragma mark 请求优惠活动---新品汇---数据
 - (void)requestActivitiesWithNewData{
+    
+    self.pageNo +=1;
     __weak typeof(self)wSelf = self ;
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
@@ -1308,7 +1355,7 @@
     hud.labelText = @"请稍候..." ;
     NSDictionary *parameters = @{
                                  
-                                 @"page_no":[NSNumber numberWithInt:1]
+                                 @"page_no":[NSNumber numberWithInt:self.pageNo]
                                  
                                  };
     [handler postURLStr:webGetNewList postDic:parameters
@@ -1330,22 +1377,32 @@
          BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
          if( state )
          {
-             //给图片轮播图片赋值
-             self.imagesOtherURLInActivitiesArry = [NSMutableArray new];
-             for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+             //结束上拉刷新
+             [_activityTableView.footer endRefreshing];
+             NSArray *infoArry = [[retInfo objectForKey:@"result"]objectForKey:@"detailInfo"];
+             if (infoArry.count > 0) {
                  
-                 [self.imagesOtherURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 //给图片轮播图片赋值
+                 for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+                     
+                     [self.imagesOtherURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 }
+                 [self.imagesOtherURLInActivitiesArry insertObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png" atIndex:0];
+                 [self.imagesOtherURLInActivitiesArry addObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png"];
+                 //刷新图片轮播
+                 [self initActivitiesInterface:self.imagesOtherURLInActivitiesArry];
+                 
+                 //把基本信息self.activitiesDetailInfoArry
+                 [self.activitiesNewDetailInfoArry addObjectsFromArray:infoArry];
+                 
+                 [_activityTableView reloadData];
+                 
+                 
+             }else{
+                 
+                 _activityTableView.footer.hidden = YES;
              }
-             [self.imagesOtherURLInActivitiesArry insertObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png" atIndex:0];
-             [self.imagesOtherURLInActivitiesArry addObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png"];
-             //刷新图片轮播
-             [self initActivitiesInterface:self.imagesOtherURLInActivitiesArry];
              
-             //把基本信息self.activitiesDetailInfoArry
-             self.activitiesNewDetailInfoArry = [NSMutableArray new];
-             self.activitiesNewDetailInfoArry = [[retInfo objectForKey:@"result"]objectForKey:@"detailInfo"];
-             
-             [_activityTableView reloadData];
          }
          else
          {
@@ -1357,6 +1414,8 @@
 
 #pragma mark 请求优惠活动---有享卷---数据
 - (void)requestActivitiesWithCouponsData{
+    
+    self.pageNo +=1;
     __weak typeof(self)wSelf = self ;
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
@@ -1366,7 +1425,7 @@
     hud.labelText = @"请稍候..." ;
     NSDictionary *parameters = @{
                                  
-                                 @"page_no":[NSNumber numberWithInt:1],
+                                 @"page_no":[NSNumber numberWithInt:self.pageNo],
                                  @"userId" :[NSNumber numberWithInt:6]
                                  };
     [handler postURLStr:webGetCouponsList postDic:parameters
@@ -1388,22 +1447,33 @@
          BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
          if( state )
          {
-             //给图片轮播图片赋值
-             self.imagesOtherURLInActivitiesArry = [NSMutableArray new];
-             for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+             //结束上拉刷新
+             [_activityTableView.footer endRefreshing];
+             NSArray *infoArry = [[retInfo objectForKey:@"result"]objectForKey:@"couponsList"];
+
+             if (infoArry.count > 0) {
                  
-                 [self.imagesOtherURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 //给图片轮播图片赋值
+                 for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+                     
+                     [self.imagesOtherURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+                 }
+                 [self.imagesOtherURLInActivitiesArry insertObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png" atIndex:1];
+                 
+                 //刷新图片轮播
+                 [self initActivitiesInterface:self.imagesOtherURLInActivitiesArry];
+                 
+                 //把基本信息self.activitiesDetailInfoArry
+                 [self.activitiesCouponsDetailInfoArry addObjectsFromArray:infoArry];
+                 
+                 [_activityTableView reloadData];
+
+                 
+             }else{
+                 
+                 _activityTableView.footer.hidden = YES;
              }
-             [self.imagesOtherURLInActivitiesArry insertObject:@"http://10.0.0.177:8000///FileUploadImage/Coupons/_201509121538144531344.png" atIndex:1];
-            
-             //刷新图片轮播
-             [self initActivitiesInterface:self.imagesOtherURLInActivitiesArry];
              
-             //把基本信息self.activitiesDetailInfoArry
-             self.activitiesCouponsDetailInfoArry = [NSMutableArray new];
-             self.activitiesCouponsDetailInfoArry = [[retInfo objectForKey:@"result"]objectForKey:@"couponsList"];
-             
-             [_activityTableView reloadData];
          }
          else
          {
@@ -1412,7 +1482,7 @@
      }] ;
 }
 #pragma mark 请求优惠活动---领取优享卷---------
-- (void)requestActivitiesWithHaveCoupons:(NSNumber *)cardId{
+- (void)requestActivitiesWithHaveCoupons:(UIButton *)sender{
     __weak typeof(self)wSelf = self ;
     
     NZWebHandler *handler = [[NZWebHandler alloc] init] ;
@@ -1422,9 +1492,9 @@
     hud.labelText = @"请稍候..." ;
     NSDictionary *parameters = @{
                                  
-                                 @"page_no":[NSNumber numberWithInt:1],
                                  @"userId" :[NSNumber numberWithInt:6],
-                                 @"cId":cardId
+                                 @"cId":[NSNumber numberWithInt:(int)sender.tag]
+                                 
                                  };
     [handler postURLStr:webReceiveCoupons postDic:parameters
                   block:^(NSDictionary *retInfo, NSError *error)
@@ -1445,11 +1515,19 @@
          BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
          if( state )
          {
-             NSString *info = @"领取优享卷成功！";
-             UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:@"提示" message:info delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
-             [alertV show];
-
-         
+             if ([[retInfo objectForKey:@"isSuccess"]boolValue]) {
+                 
+                 NSString *info = @"领取优享卷成功！";
+                 UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:@"提示" message:info delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                 [alertV show];
+             }else{
+                 
+                 NSString *info = @"领取优享卷失败！";
+                 UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:@"提示" message:info delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                 [alertV show];
+             }
+             [_activityTableView reloadData];
+             
          }
          else
          {
@@ -1487,7 +1565,7 @@
          if( state )
          {
              //给图片轮播图片赋值
-             self.imagesOtherURLInActivitiesArry = [NSMutableArray new];
+             [self.imagesOtherURLInActivitiesArry removeAllObjects];
              for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
                  
                  [self.imagesOtherURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
@@ -1498,7 +1576,6 @@
              [self initActivitiesInterface:self.imagesOtherURLInActivitiesArry];
              
              //把基本信息self.activitiesDetailInfoArry
-             self.activitiesMajorSuitDetailInfoArry = [NSMutableArray new];
              self.activitiesMajorSuitDetailInfoArry = [retInfo objectForKey:@"shopList"];
              
              [_activityTableView reloadData];
@@ -1614,6 +1691,14 @@
 
 #pragma mark 其它点击事件
 - (void)classClick:(UIButton *)button { // 优惠活动四个活动按钮事件
+    self.pageNo = 0;
+    [self.imagesURLInActivitiesArry removeAllObjects];;
+    [self.activitiesTimeDetailInfoArry removeAllObjects];
+    [self.imagesOtherURLInActivitiesArry removeAllObjects];
+    [self.activitiesNewDetailInfoArry removeAllObjects];
+    [self.activitiesCouponsDetailInfoArry removeAllObjects];
+    [self.activitiesMajorSuitDetailInfoArry  removeAllObjects];
+    
     int btnTag = (int)button.tag;
     switch (btnTag) {
         case 101:
@@ -1628,7 +1713,10 @@
             // 刷新限时抢
             _acType = enumtActivitiesType_Grab;
            //加载限时抢数据
-            [self requestActivitiesWithLimitTimeData];
+            _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithLimitTimeData)];
+            // 马上进入刷新状态
+            [_activityTableView.footer beginRefreshing];
+            //[self requestActivitiesWithLimitTimeData];
             
             break;
         case 102:
@@ -1643,7 +1731,10 @@
             // 刷新新品汇
             _acType = enumtActivitiesType_newProduct;
             //加载新品汇数据
-            [self requestActivitiesWithNewData];
+            _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithNewData)];
+            // 马上进入刷新状态
+            [_activityTableView.footer beginRefreshing];
+            //[self requestActivitiesWithNewData];
             
             break;
         case 103:
@@ -1658,7 +1749,11 @@
             // 刷新优享券
             _acType = enumtActivitiesType_Coupons;
             
-            [self requestActivitiesWithCouponsData];
+            _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithCouponsData)];
+            // 马上进入刷新状态
+            [_activityTableView.footer beginRefreshing];
+
+            //[self requestActivitiesWithCouponsData];
             break;
         case 104:
             grabImgV.image = [UIImage imageNamed:@"限时抢-灰"];
@@ -1671,6 +1766,7 @@
             majorLab.textColor = darkRedColor;
             // 刷新大牌档
             _acType = enumtActivitiesType_MajorSuit;
+            
             [self requestActivitiesWithMajorSuitData];
             break;
         default:
@@ -1698,9 +1794,25 @@
 }
 
 #pragma mark   点击马上抢跳转方法
--(void)quicklyViewSingleTapAction:(UIGestureRecognizer *)gestureRecognizer{
-    
+-(void)quicklyButtonAction:(UIButton *)sender{
+
+    // 跳转商品详情页面
+    NZCommodityDetailController *commodityDetailVCTR = [[NZCommodityDetailController alloc] init];
+    commodityDetailVCTR.goodID = (int)sender.tag-900;
+    commodityDetailVCTR.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:commodityDetailVCTR animated:YES];
 }
+#pragma mark   点击新品--跳转方法
+-(void)goToBuyAction:(UIButton *)sender{
+    
+    // 跳转商品详情页面
+    NZCommodityDetailController *commodityDetailVCTR = [[NZCommodityDetailController alloc] init];
+    commodityDetailVCTR.goodID = (int)sender.tag;
+    commodityDetailVCTR.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:commodityDetailVCTR animated:YES];
+
+}
+
 
 #pragma mark 指示器点击事件
 // 选择材质
@@ -1741,13 +1853,36 @@
 // 选择优惠活动
 - (IBAction)activitiesAction:(UIButton *)sender {
     
+    self.pageNo = 0;
     _indicateArrowLeftConstraint.constant = rightFloat;
     _tableView.hidden = YES;
     _activityTableView.hidden = NO;
-//    _acType = enumtActivitiesType_Grab;
+    
+    grabImgV.image = [UIImage imageNamed:@"限时抢-红"];
+    nProductImgV.image = [UIImage imageNamed:@"新品汇-灰"];
+    couponsImgV.image = [UIImage imageNamed:@"优惠券-灰"];
+    majorImgV.image = [UIImage imageNamed:@"大牌档-灰"];
+    grabLab.textColor = darkRedColor;
+    nProductLab.textColor = [UIColor grayColor];
+    couponsLab.textColor = [UIColor grayColor];
+    majorLab.textColor = [UIColor grayColor];
+
+    _acType = enumtActivitiesType_Grab;
+    
+    [self.imagesURLInActivitiesArry removeAllObjects];;
+    [self.activitiesTimeDetailInfoArry removeAllObjects];
+    
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadNewData方法）
+    //_activityTableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+    // 设置回调（一旦进入刷新状态，就调用target的action，也就是调用self的loadMoreData方法）
+    _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithLimitTimeData)];
+    // 马上进入刷新状态
+    [_activityTableView.footer beginRefreshing];
+
     //-----获取优惠活动限时抢数据
-    [self requestActivitiesWithLimitTimeData];
+    //[self requestActivitiesWithLimitTimeData];
     
 }
+
 
 @end

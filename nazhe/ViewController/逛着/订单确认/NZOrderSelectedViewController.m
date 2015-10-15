@@ -83,6 +83,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self createNavigationItemTitleViewWithTitle:@"参数选择"];
+    [self leftButtonTitle:nil];
+    
 }
 -(void)creteInitValue{
     
@@ -100,8 +103,6 @@
 -(void)initView{
     
     NSLog(@"----------%i",self.goodID);
-    [self createNavigationItemTitleViewWithTitle:@"参数选择"];
-    [self leftButtonTitle:nil];
     self.number = 1;
     
     self.orderSelectedTable.separatorStyle = UITableViewCellSeparatorStyleNone;
