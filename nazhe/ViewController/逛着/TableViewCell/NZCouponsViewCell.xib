@@ -77,23 +77,34 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYO-DH-CNR">
+                                <rect key="frame" x="0.0" y="130" width="211" height="44"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerY" secondItem="Vk3-5A-EbY" secondAttribute="centerY" constant="50" id="2Pi-sA-kzo"/>
                             <constraint firstAttribute="centerX" secondItem="Vk3-5A-EbY" secondAttribute="centerX" constant="30" id="62X-QA-7G0"/>
                             <constraint firstItem="Gbs-Wl-l0s" firstAttribute="leading" secondItem="Vk3-5A-EbY" secondAttribute="trailing" constant="5" id="6PS-W2-URv"/>
+                            <constraint firstAttribute="trailing" secondItem="gYO-DH-CNR" secondAttribute="trailing" id="7Ir-UM-FR4"/>
                             <constraint firstAttribute="centerX" secondItem="JMX-M6-g1A" secondAttribute="centerX" id="9F9-Ja-NCK"/>
                             <constraint firstAttribute="trailing" secondItem="UIp-a3-LDb" secondAttribute="trailing" id="9SA-0G-hCc"/>
                             <constraint firstAttribute="centerY" secondItem="NFh-GY-sxM" secondAttribute="centerY" constant="10" id="9gm-Pi-kbO"/>
                             <constraint firstAttribute="trailing" secondItem="Gbs-Wl-l0s" secondAttribute="trailing" id="DNo-Oz-55u"/>
+                            <constraint firstItem="gYO-DH-CNR" firstAttribute="top" secondItem="UIp-a3-LDb" secondAttribute="bottom" id="FeM-5f-7BP"/>
                             <constraint firstItem="Gbs-Wl-l0s" firstAttribute="bottom" secondItem="Vk3-5A-EbY" secondAttribute="bottom" id="Gq3-qg-Y63"/>
                             <constraint firstAttribute="trailing" secondItem="fm7-1d-sE8" secondAttribute="trailing" id="HSU-RJ-xlM"/>
+                            <constraint firstItem="gYO-DH-CNR" firstAttribute="leading" secondItem="e2I-cj-7cS" secondAttribute="leading" id="OAv-AD-s1i"/>
                             <constraint firstItem="NFh-GY-sxM" firstAttribute="leading" secondItem="e2I-cj-7cS" secondAttribute="leading" id="R6y-Qb-eqZ"/>
                             <constraint firstAttribute="centerY" secondItem="fm7-1d-sE8" secondAttribute="centerY" constant="-60" id="Rb9-mc-nJM"/>
                             <constraint firstAttribute="centerY" secondItem="JMX-M6-g1A" secondAttribute="centerY" constant="-15" id="V47-Tf-mI8"/>
                             <constraint firstItem="Gbs-Wl-l0s" firstAttribute="top" secondItem="Vk3-5A-EbY" secondAttribute="top" id="Wtg-U6-2TL"/>
                             <constraint firstAttribute="trailing" secondItem="NFh-GY-sxM" secondAttribute="trailing" id="hFf-dd-RD1"/>
+                            <constraint firstAttribute="bottom" secondItem="gYO-DH-CNR" secondAttribute="bottom" id="q0h-cZ-EsJ"/>
                             <constraint firstItem="fm7-1d-sE8" firstAttribute="leading" secondItem="e2I-cj-7cS" secondAttribute="leading" id="taU-pf-M5h"/>
                             <constraint firstItem="UIp-a3-LDb" firstAttribute="leading" secondItem="e2I-cj-7cS" secondAttribute="leading" id="wG6-ET-oe0"/>
                             <constraint firstAttribute="centerY" secondItem="UIp-a3-LDb" secondAttribute="centerY" constant="-35" id="xom-o6-ELj"/>
@@ -119,6 +130,8 @@
                 <outlet property="couponImgView" destination="oug-13-OLU" id="FQK-YW-8oQ"/>
                 <outlet property="couponLabel" destination="JMX-M6-g1A" id="2PD-po-KGF"/>
                 <outlet property="couponTittleLable" destination="NFh-GY-sxM" id="hoe-vk-WAo"/>
+                <outlet property="haveButton" destination="gYO-DH-CNR" id="xBa-PZ-U5F"/>
+                <outlet property="haveLable" destination="fm7-1d-sE8" id="IuK-rN-7Rh"/>
                 <outlet property="remainLabel" destination="UIp-a3-LDb" id="qXD-ii-yYL"/>
             </connections>
             <point key="canvasLocation" x="501.5" y="359.5"/>

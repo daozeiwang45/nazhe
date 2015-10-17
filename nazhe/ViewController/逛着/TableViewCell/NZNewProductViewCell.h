@@ -15,6 +15,11 @@
 @property (strong, nonatomic) IBOutlet UIImageView *leftImageView;
 @property (strong, nonatomic) IBOutlet UIImageView *rightImageView;
 
+@property (weak, nonatomic) IBOutlet UIButton *leftButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *rightButton;
+
+
 @property (nonatomic, strong) UILabel *leftNameLabel;
 @property (nonatomic, strong) UILabel *leftPriceLabel;
 @property (nonatomic, strong) UILabel *rightNameLabel;

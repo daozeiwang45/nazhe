@@ -16,5 +16,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *remainLabel;
 @property (strong, nonatomic) IBOutlet UIImageView *backImage;
 @property (weak, nonatomic) IBOutlet UIImageView *couponImgView;
+@property (weak, nonatomic) IBOutlet UIButton *haveButton;
+@property (weak, nonatomic) IBOutlet UILabel *haveLable;
 
 @end

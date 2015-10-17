@@ -24,11 +24,22 @@
                                     <constraint firstAttribute="width" secondItem="LJT-GG-Nrh" secondAttribute="height" multiplier="1:1" id="R2W-By-gdx"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Pm-ki-ejP">
+                                <rect key="frame" x="0.0" y="0.0" width="173" height="226"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="LJT-GG-Nrh" firstAttribute="top" secondItem="GaT-ks-R2K" secondAttribute="top" id="6TL-Cu-smJ"/>
+                            <constraint firstItem="5Pm-ki-ejP" firstAttribute="leading" secondItem="GaT-ks-R2K" secondAttribute="leading" id="FOQ-0D-piQ"/>
+                            <constraint firstAttribute="trailing" secondItem="5Pm-ki-ejP" secondAttribute="trailing" id="Xxx-eC-Adb"/>
                             <constraint firstItem="LJT-GG-Nrh" firstAttribute="leading" secondItem="GaT-ks-R2K" secondAttribute="leading" id="hXD-jr-VxL"/>
+                            <constraint firstAttribute="bottom" secondItem="5Pm-ki-ejP" secondAttribute="bottom" id="kfR-mK-TNd"/>
+                            <constraint firstItem="5Pm-ki-ejP" firstAttribute="top" secondItem="GaT-ks-R2K" secondAttribute="top" id="zpV-Dm-UUP"/>
                             <constraint firstAttribute="trailing" secondItem="LJT-GG-Nrh" secondAttribute="trailing" id="zph-IV-FAq"/>
                         </constraints>
                     </view>
@@ -41,12 +52,23 @@
                                     <constraint firstAttribute="width" secondItem="3HQ-kc-2sv" secondAttribute="height" multiplier="1:1" id="v0Z-YS-Ql1"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uOk-15-5g6">
+                                <rect key="frame" x="0.0" y="0.0" width="172" height="226"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="uOk-15-5g6" secondAttribute="trailing" id="7nh-z3-AfC"/>
                             <constraint firstAttribute="trailing" secondItem="3HQ-kc-2sv" secondAttribute="trailing" id="Eup-hD-obZ"/>
+                            <constraint firstAttribute="bottom" secondItem="uOk-15-5g6" secondAttribute="bottom" id="Evr-11-ogS"/>
+                            <constraint firstItem="uOk-15-5g6" firstAttribute="leading" secondItem="Tz2-Cf-uTy" secondAttribute="leading" id="cdY-EG-MLB"/>
                             <constraint firstItem="3HQ-kc-2sv" firstAttribute="top" secondItem="Tz2-Cf-uTy" secondAttribute="top" id="dUK-P9-RrU"/>
                             <constraint firstItem="3HQ-kc-2sv" firstAttribute="leading" secondItem="Tz2-Cf-uTy" secondAttribute="leading" id="jfO-98-Rr3"/>
+                            <constraint firstItem="uOk-15-5g6" firstAttribute="top" secondItem="Tz2-Cf-uTy" secondAttribute="top" id="thL-7c-hTW"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -62,8 +84,10 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="leftButton" destination="5Pm-ki-ejP" id="vRf-Ll-jaR"/>
                 <outlet property="leftImageView" destination="LJT-GG-Nrh" id="VzW-z1-6jg"/>
                 <outlet property="leftView" destination="GaT-ks-R2K" id="re7-GL-buM"/>
+                <outlet property="rightButton" destination="uOk-15-5g6" id="2yN-H9-K3s"/>
                 <outlet property="rightImageView" destination="3HQ-kc-2sv" id="R4W-06-sf6"/>
                 <outlet property="rightView" destination="Tz2-Cf-uTy" id="qc2-YB-wuf"/>
             </connections>

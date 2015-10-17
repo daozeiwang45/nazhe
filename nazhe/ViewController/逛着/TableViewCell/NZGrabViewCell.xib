@@ -38,7 +38,7 @@
                         <color key="textColor" red="0.80000001192092896" green="0.80000001192092896" blue="0.80000001192092896" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="46u-0F-6Nj">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="46u-0F-6Nj" userLabel="马上抢View">
                         <rect key="frame" x="262" y="151" width="88" height="38"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="马上抢" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XYQ-Zw-Iqc">
@@ -59,17 +59,28 @@
                                 <color key="textColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Eqi-CH-laZ">
+                                <rect key="frame" x="0.0" y="0.0" width="88" height="38"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="XYQ-Zw-Iqc" firstAttribute="leading" secondItem="46u-0F-6Nj" secondAttribute="leading" id="3j5-5o-gqe"/>
                             <constraint firstAttribute="trailing" secondItem="wLJ-vR-vzk" secondAttribute="trailing" id="AA9-R0-3P1"/>
                             <constraint firstItem="wLJ-vR-vzk" firstAttribute="top" secondItem="46u-0F-6Nj" secondAttribute="top" constant="20" id="CGv-Rx-IhT"/>
+                            <constraint firstItem="Eqi-CH-laZ" firstAttribute="top" secondItem="46u-0F-6Nj" secondAttribute="top" id="GbQ-zD-otj"/>
+                            <constraint firstItem="Eqi-CH-laZ" firstAttribute="leading" secondItem="46u-0F-6Nj" secondAttribute="leading" id="OA9-I8-ODy"/>
                             <constraint firstItem="XYQ-Zw-Iqc" firstAttribute="top" secondItem="46u-0F-6Nj" secondAttribute="top" constant="5" id="Q7n-4Q-WnR"/>
                             <constraint firstItem="wLJ-vR-vzk" firstAttribute="leading" secondItem="46u-0F-6Nj" secondAttribute="leading" id="Ued-SQ-fYU"/>
                             <constraint firstAttribute="trailing" secondItem="XYQ-Zw-Iqc" secondAttribute="trailing" id="WNT-Ii-abG"/>
                             <constraint firstAttribute="width" constant="88" id="YPz-bQ-3Ui"/>
+                            <constraint firstAttribute="bottom" secondItem="Eqi-CH-laZ" secondAttribute="bottom" id="apF-b9-0Zc"/>
                             <constraint firstAttribute="height" constant="38" id="bwV-el-3Bw"/>
+                            <constraint firstAttribute="trailing" secondItem="Eqi-CH-laZ" secondAttribute="trailing" id="kZ5-Rw-aQz"/>
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="【限时抢】宝石首饰全套" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bND-eK-Vtm">
@@ -113,6 +124,7 @@
                 <outlet property="marketPriceLab" destination="1pJ-B8-otC" id="7Fq-6Q-ibI"/>
                 <outlet property="nowPriceLab" destination="Kaa-Zi-0kb" id="rcA-QC-6ya"/>
                 <outlet property="productImageV" destination="bdC-2i-Qdr" id="C8q-h7-N3Y"/>
+                <outlet property="quicklyButton" destination="Eqi-CH-laZ" id="svT-rt-KeA"/>
                 <outlet property="quicklyView" destination="46u-0F-6Nj" id="b0y-Ca-UWy"/>
             </connections>
             <point key="canvasLocation" x="484.5" y="560"/>
