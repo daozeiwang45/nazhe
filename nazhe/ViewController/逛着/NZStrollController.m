@@ -990,21 +990,55 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
             
+            //看是否已经领取
             int state = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"state"]intValue];
-            if (state == 0) {
-               
-                cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
-                [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
-
-            }else if(state == 1){
-                
-                cell.haveLable.text = @"已领取";
-                
-            }else if (state == 2){
-                
-                cell.haveLable.text = @"已领取";
-            }
+            //看时领取还是兑换
+            int type = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"type"]intValue];
             
+            if (type == 0) {
+                
+                cell.remainLabel.text = [NSString stringWithFormat:@"仅剩%@",[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"counts"]];
+
+                if (state == 0) {
+                    
+                    cell.haveLable.text = @"已领取";
+                    
+                }else if(state == 1){
+                    
+                    cell.haveLable.text = @"已领取";
+                    
+                }else if (state == 3){
+                    
+                    cell.haveLable.text = @"立即领取";
+                    cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
+                    [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
+
+                }
+                
+
+            //兑换类型
+            }else if (type == 1){
+                cell.remainLabel.text = [NSString stringWithFormat:@"积分%@/仅剩%@",[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"score"],[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"counts"]];
+
+                if (state == 0) {
+                    
+                    cell.haveLable.text = @"已兑换";
+                    
+                }else if(state == 1){
+                    
+                    cell.haveLable.text = @"已兑换";
+                    
+                }else if (state == 3){
+                    
+                    cell.haveLable.text = @"立即兑换";
+                    cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
+                    [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
+
+                }
+
+                
+            }
+                
             cell.backImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"couponBack%d",(int)((int)indexPath.row)%4]];
             //图片地址
             NSString *smallImg2 =[NZGlobal GetImgBaseURL:[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"img"]];
@@ -1012,7 +1046,6 @@
             [cell.couponImgView sd_setImageWithURL:imgURL2 placeholderImage:defaultImage];
             cell.couponTittleLable.text = [[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"name"];
             cell.couponLabel.text = [NSString stringWithFormat:@"现金卷￥%@",[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"money"]];
-            cell.remainLabel.text = [NSString stringWithFormat:@"积分%@/仅剩%@",[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"score"],[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"counts"]];
             
             return cell;
         } else {

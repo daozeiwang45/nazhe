@@ -1060,7 +1060,7 @@
 }
 
 #pragma mark 点击立即拿着方法--跳到选择商品参数页面----许景源
-- (void)buyButtonAction:(UIGestureRecognizer *)gestureRecognizer {
+- (void)buyButtonAction:(UIButton *)sender {
     
     NZOrderSelectedViewController *orderSelectedViewCtr = [[NZOrderSelectedViewController alloc] initWithNibName:@"NZOrderSelectedViewController" bundle:nil];
     orderSelectedViewCtr.goodID = self.goodID;

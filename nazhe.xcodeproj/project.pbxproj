@@ -1259,11 +1259,11 @@
 		1F49C6321B7B4389006532B7 /* 逛着 */ = {
 			isa = PBXGroup;
 			children = (
-				4FFB31DE1BCB5F0600306AFD /* 订单确认 */,
 				1F50A0E91B8D693500CADD51 /* TableViewCell */,
 				1F9ECD5E1B7D8EDE00810B7D /* NZStrollController.h */,
 				1F9ECD5F1B7D8EDE00810B7D /* NZStrollController.m */,
 				1F7D39E61B903BB500C5E039 /* 商城 */,
+				4FFB31DE1BCB5F0600306AFD /* 订单确认 */,
 				1F4B36DA1BA05011009C3907 /* 大牌档 */,
 			);
 			path = "逛着";
