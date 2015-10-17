@@ -7,17 +7,27 @@
 //
 
 #import "NZShoppingBagViewController.h"
-#import "NZShopBagViewCell.h"
-#import "NZShopBagExpendViewCell.h"
+#import "NZShopBagTableViewCell.h"
+#import "NZShopBagExpandTableViewCell.h"
 #import "NZCommodityModel.h"
+#import "ShopBagModel.h"
+#import "NZShopBagViewModel.h"
 
 @interface NZShoppingBagViewController ()<UITableViewDataSource, UITableViewDelegate, NZShopBagDelegate, NZShopBagExpendDelegate> {
     
-    int currentIndex; // 当前编辑cell
+    int currentSection; // 当前编辑cell的section
+    int currentRow; // 当前编辑cell的row
     
     BOOL isAllSelect; // 是否全选
     
-    NSMutableArray *infoArr;
+    NSMutableArray *shopBagVMArray; // 购物袋列表视图模型数组
+    ShopBagModel *shopBagModel; // 购物袋列表数据存储模型
+    
+    int deleteSection; // 要删除的商品的section
+    int deleteRow; // 要删除的商品的row
+    double deletePrice; // 要删除的商品的单价
+    int deleteNumber; // 要删除的商品的数量
+    BOOL deleteState; // 删除时的选中状态
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
@@ -29,6 +39,11 @@
 @property (strong, nonatomic) IBOutlet UIButton *settleBtn;
 @property (assign, nonatomic) int settleNumber;
 
+/************** 规格选择模板 ***************/
+@property (nonatomic, strong) UIView *shadowView; // 背景阴影view
+@property (nonatomic, strong) UIView *specificationsView; // 规格选择view
+@property (nonatomic, strong) UIScrollView *specificationsScrollV; // 规格内容scrollView
+
 - (IBAction)allSelectAction:(UIButton *)sender;
 - (IBAction)settleAction:(UIButton *)sender;
 
@@ -39,48 +54,16 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super self];
     if (self) {
-        currentIndex = -1;
+        currentSection = -1;
+        currentRow = -1;
         
         _totalPrice = 0.0;
         _editPrice = 0.0;
         
         _settleNumber = 0;
         
-        infoArr = [[NSMutableArray alloc] init];
+        shopBagVMArray = [NSMutableArray array];
         
-        /**
-         
-         *  初始化一个数组，数组里面放字典。字典里面放的是单元格需要展示的数据
-         
-         */
-        
-        for (int i = 0; i<3; i++)
-            
-        {
-            
-            NSMutableDictionary *infoDict = [[NSMutableDictionary alloc] init];
-            
-//            [infoDict setValue:@"img6.png" forKey:@"imageName"];
-//            
-//            [infoDict setValue:@"这是商品标题" forKey:@"goodsTitle"];
-            
-            [infoDict setValue:@"35000.00" forKey:@"commodityPrice"];
-            
-            [infoDict setValue:[NSNumber numberWithBool:YES] forKey:@"selectState"];
-            
-            [infoDict setValue:[NSNumber numberWithInt:1] forKey:@"commodityNum"];
-            
-            [infoDict setValue:[NSNumber numberWithInt:i]  forKey:@"index"];
-            
-            //封装数据模型
-            
-            NZCommodityModel *commodityModel = [[NZCommodityModel alloc] initWithDict:infoDict];
-            
-            //将数据模型放入数组中
-            
-            [infoArr addObject:commodityModel];
-            
-        }
     }
     return self;
 }
@@ -98,14 +81,14 @@
     _tableView.delegate = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    // 判断有几个选择了，算进总价和结算个数中（实际不需要，都为未选）
-    for (int i = 0; i < infoArr.count; i++) {
-        NZCommodityModel *commodityModel = infoArr[i];
-        if (commodityModel.selectState) {
-            self.totalPrice += commodityModel.commodityNum * [commodityModel.commodityPrice doubleValue];
-            self.settleNumber ++;
-        }
-    }
+//    // 判断有几个选择了，算进总价和结算个数中（实际不需要，都为未选）
+//    for (int i = 0; i < infoArr.count; i++) {
+//        NZCommodityModel *commodityModel = infoArr[i];
+//        if (commodityModel.selectState) {
+//            self.totalPrice += commodityModel.commodityNum * [commodityModel.commodityPrice doubleValue];
+//            self.settleNumber ++;
+//        }
+//    }
     
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"合计￥%.2f",self.totalPrice]];
     [str addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:NSMakeRange(0, 2)];
@@ -115,39 +98,71 @@
     
     [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
     
-    // 判断有没有全选
-    isAllSelect = YES;
-    for (int i = 0; i < infoArr.count; i++) {
-        NZCommodityModel *commodityModel = infoArr[i];
-        if (!commodityModel.selectState) {
-            isAllSelect = NO;
-            break;
-        }
-    }
+    /************** 规格选择模板 ***************/
+    _shadowView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight-64)];
+    _shadowView.backgroundColor = [UIColor blackColor];
+    _shadowView.alpha = 0.6;
+    [self.view addSubview:_shadowView];
+    [self.view sendSubviewToBack:_shadowView];
     
-    if (isAllSelect) {
-        _selectImgV.image = [UIImage imageNamed:@"圆-已选"];
-        
-    } else {
-        _selectImgV.image = [UIImage imageNamed:@"圆-未选"];
-    }
+    _specificationsView = [[UIView alloc] initWithFrame:CGRectMake((ScreenWidth-ScreenWidth*305/375)/2, (ScreenHeight-ScreenWidth*372/375)/2, ScreenWidth*305/375, ScreenWidth*372/375)];
+    _specificationsView.backgroundColor = [UIColor whiteColor];
+    _specificationsView.layer.cornerRadius = 5.f;
+    _specificationsView.layer.masksToBounds = YES;
+    [self.view addSubview:_specificationsView];
+    [self.view sendSubviewToBack:_specificationsView];
+    
+    _specificationsScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth*306/375, ScreenWidth*300/375)];
+    _specificationsScrollV.backgroundColor = [UIColor greenColor];
+    [_specificationsView addSubview:_specificationsScrollV];
+    
+    UIButton *commitSpeBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*90/375, ScreenWidth*321/375, ScreenWidth*125/375, ScreenWidth*30/375)];
+    commitSpeBtn.backgroundColor = darkRedColor;
+    [commitSpeBtn setTitle:@"确认" forState:UIControlStateNormal];
+    [commitSpeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    commitSpeBtn.titleLabel.font = [UIFont systemFontOfSize:15.f];
+    commitSpeBtn.layer.cornerRadius = 2.f;
+    commitSpeBtn.layer.masksToBounds = YES;
+    [commitSpeBtn addTarget:self action:@selector(commitSpeAction:) forControlEvents:UIControlEventTouchUpInside];
+    [_specificationsView addSubview:commitSpeBtn];
+    
+    [self requestShopBagListData];
+    
+//    // 判断有没有全选
+//    isAllSelect = YES;
+//    for (int i = 0; i < infoArr.count; i++) {
+//        NZCommodityModel *commodityModel = infoArr[i];
+//        if (!commodityModel.selectState) {
+//            isAllSelect = NO;
+//            break;
+//        }
+//    }
+//    
+//    if (isAllSelect) {
+//        _selectImgV.image = [UIImage imageNamed:@"圆-已选"];
+//        
+//    } else {
+//        _selectImgV.image = [UIImage imageNamed:@"圆-未选"];
+//    }
 }
 
 #pragma mark UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return shopBagVMArray.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    return 3;
+    NSArray *shopBagVMAry = shopBagVMArray[section];
+    return shopBagVMAry.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ((int)indexPath.row == currentIndex) {
-        NZShopBagExpendViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NZShopBagExpendCellIdentify];
+    
+    if ((int)indexPath.section == currentSection && (int)indexPath.row == currentRow) {
+        NZShopBagExpandTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NZShopBagExpendCellIdentify];
         if (cell == nil) {
-            cell = [[[NSBundle mainBundle] loadNibNamed:@"NZShopBagExpendViewCell" owner:self options:nil] lastObject] ;
+            cell = [[NZShopBagExpandTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NZShopBagExpendCellIdentify];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         if ((int)indexPath.row == 0) {
@@ -155,64 +170,126 @@
         }
         
         cell.delegate = self;
-        cell.commodityModel = infoArr[indexPath.row];
+        cell.section = (int)indexPath.section;
+        cell.row = (int)indexPath.row;
+        
+        NSArray *shopBagVMAry = shopBagVMArray[indexPath.section];
+        cell.shopBagViewModel = shopBagVMAry[indexPath.row];
         
         return cell;
     } else {
         
-        NZShopBagViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NZShopBagCellIdentify];
+        NZShopBagTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NZShopBagCellIdentify];
         if (cell == nil) {
-            cell = [[[NSBundle mainBundle] loadNibNamed:@"NZShopBagViewCell" owner:self options:nil] lastObject] ;
+            cell = [[NZShopBagTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:NZShopBagCellIdentify];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         if ((int)indexPath.row == 0) {
             cell.topLine.hidden = YES;
         }
-        if ((int)indexPath.row == 2) {
-            cell.bottonLine.hidden = YES;
+        NSArray *shopBagVMAry = shopBagVMArray[indexPath.section];
+        if ((int)indexPath.row == shopBagVMAry.count-1) {
+            cell.bottomLine.hidden = YES;
         }
         
         cell.delegate = self;
-        cell.commodityModel = infoArr[indexPath.row];
+        cell.section = (int)indexPath.section;
+        cell.row = (int)indexPath.row;
+        
+        cell.shopBagViewModel = shopBagVMAry[indexPath.row];
         
         return cell;
     }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *whiteView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 10)];
+    UIView *whiteView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 40)];
     whiteView.backgroundColor = [UIColor whiteColor];
+    
+    UILabel *brandNameLab = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, ScreenWidth-20, 39.5)];
+    ShopBagBrandModel *shopBrandModel = shopBagModel.list[section];
+    brandNameLab.text = shopBrandModel.shopName;
+    brandNameLab.textColor = [UIColor darkGrayColor];
+    brandNameLab.font = [UIFont systemFontOfSize:15.f];
+    [whiteView addSubview:brandNameLab];
+    
+    UIView *line2 = [[UIView alloc] initWithFrame:CGRectMake(0, 39.5, ScreenWidth, 0.5)];
+    line2.backgroundColor = [UIColor grayColor];
+    [whiteView addSubview:line2];
+    
     return whiteView;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    UIView *lightGrayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenWidth*10/375)];
+    lightGrayView.backgroundColor = [UIColor lightGrayColor];
+    return lightGrayView;
 }
 
 #pragma mark UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ((int)indexPath.row == currentIndex) {
-        return 220.f;
+    if ((int)indexPath.section == currentSection && (int)indexPath.row == currentRow) {
+        NSArray *shopBagVMAry = shopBagVMArray[indexPath.section];
+        NZShopBagViewModel *shopBagVM = shopBagVMAry[indexPath.row];
+        return CGRectGetMaxY(shopBagVM.commitBtnFrame)+ScreenWidth*15/375;
     } else {
-        return 120.f;
+        NSArray *shopBagVMAry = shopBagVMArray[indexPath.section];
+        NZShopBagViewModel *shopBagVM = shopBagVMAry[indexPath.row];
+        return CGRectGetMaxY(shopBagVM.editBtnFrame)+ScreenWidth*15/375;
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     
-    return 10.f;
+    return 40.f;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    if (section == shopBagVMArray.count-1) {
+        return 0.f;
+    }
+    return ScreenWidth*10/375;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 }
 
-#pragma mark NZShopBagDelegate
-- (void)deleteClick:(UITableViewCell *)cell {
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if (buttonIndex == 0) {
+        alertView = nil;
+    } else {
+        
+        [self deleteShopBagGood];
+        alertView = nil;
+    }
     
 }
 
-- (void)selectClick:(int)index andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number {
+#pragma mark NZShopBagDelegate
+- (void)deleteClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number {
+    
+    deleteSection = section;
+    deleteRow = row;
+    deletePrice = price;
+    deleteNumber = number;
+    deleteState = selectState;
+    
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil message:@"确认要删除该商品吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    
+    [alertview show];
+    
+    
+}
+
+- (void)selectClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number {
     // 不论是选择还是取消选择，都将结果纪录下来
-    NZCommodityModel *commodityModel = infoArr[index];
-    commodityModel.selectState = selectState;
-    commodityModel.commodityNum = number;
+    NSArray *shopBagVMAry = shopBagVMArray[section];
+    NZShopBagViewModel *shopBagVM = shopBagVMAry[row];
+    shopBagVM.shopBagGoodModel.selectState = selectState;
+    shopBagVM.shopBagGoodModel.count = number;
     
     if (selectState) { // 如果是选择
         self.totalPrice += price * number; // 总价要加
@@ -221,11 +298,14 @@
         
         // 判断有没有全选，如有，全选的图标要换已选
         isAllSelect = YES;
-        for (int i = 0; i < infoArr.count; i++) {
-            NZCommodityModel *commodityModel = infoArr[i];
-            if (!commodityModel.selectState) {
-                isAllSelect = NO;
-                break;
+        for (int i = 0; i < shopBagVMArray.count; i++) {
+            NSArray *shopBagVMAry = shopBagVMArray[i];
+            for (int j=0; j<shopBagVMAry.count; j++) {
+                NZShopBagViewModel *shopBagVM = shopBagVMAry[j];
+                if (!shopBagVM.shopBagGoodModel.selectState) {
+                    isAllSelect = NO;
+                    break;
+                }
             }
         }
         
@@ -253,12 +333,14 @@
     
 }
 
-- (void)editClick:(int)index {
-    if (currentIndex < 0) {
-        currentIndex = index;
+- (void)editClickWithSection:(int)section andRow:(int)row {
+    if (section < 0) {
+        currentSection = section;
+        currentRow = row;
         [_tableView reloadData];
     } else {
-        currentIndex = index;
+        currentSection = section;
+        currentRow = row;
         
         self.totalPrice -= self.editPrice;
         self.editPrice = 0.0;
@@ -301,19 +383,19 @@
     }
 }
 
-- (void)commitIndex:(int)index andNumber:(int)number andSinglePrice:(double)price {
+- (void)commitWithSection:(int)section andRow:(int)row andNumber:(int)number andSinglePrice:(double)price {
     
-    currentIndex = -1;
-    self.editPrice = 0.0;
+    currentSection = -1;
+    currentRow = -1;
     
-    NZCommodityModel *commodityModel = infoArr[index];
-    commodityModel.commodityNum = number;
+    [self requestEditShopBagGoodNumberWithSection:(int)section andRow:(int)row andNumber:(int)number andSinglePrice:(double)price]; // 修改数量
     
-    [_tableView reloadData];
 }
 
-- (void)cancelIndex:(int)index andNumber:(int)number andSinglePrice:(double)price {
-    currentIndex = -1;
+- (void)cancelWithSection:(int)section andRow:(int)row andNumber:(int)number andSinglePrice:(double)price {
+    
+    currentSection = -1;
+    currentRow = -1;
     
     self.totalPrice -= self.editPrice;
     self.editPrice = 0.0;
@@ -325,6 +407,191 @@
     _totalPriceLab.attributedText = str;
     
     [_tableView reloadData];
+}
+
+#pragma mark 请求购物袋列表数据
+- (void)requestShopBagListData {
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    hud.labelText = @"请稍候..." ;
+    
+    NZUser *user = [NZUserManager sharedObject].user ;
+    
+    NSString *userId = [NSString stringWithFormat:@"%@",user.userId] ;
+    
+    NSDictionary *parameters = @{
+                                 @"userId":userId
+                                 } ;
+    
+    [handler postURLStr:webShoppingBagsList postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+         
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         
+         if( state )
+         {
+             shopBagModel = [ShopBagModel objectWithKeyValues:retInfo];
+             
+             // 转商品ID
+             int i;
+             int j;
+             for (i=0; i<shopBagModel.list.count; i++) {
+                 ShopBagBrandModel *shopBagBrandModel = shopBagModel.list[i];
+                 NSMutableArray *array = [NSMutableArray array];
+                 for (j=0; j<shopBagBrandModel.goodsList.count; j++) {
+                     ShopBagGoodModel *shopBagGoodModel = shopBagBrandModel.goodsList[j];
+                     shopBagGoodModel.goodId = [retInfo[@"list"][i][@"goodsList"][j][@"id"] intValue];
+                     shopBagGoodModel.selectState = NO; // 都为为选中
+                     
+                     NZShopBagViewModel *shopBagVM = [[NZShopBagViewModel alloc] init];
+                     shopBagVM.shopBagGoodModel = shopBagGoodModel;
+                     [array addObject:shopBagVM];
+                 }
+                 [shopBagVMArray addObject:array];
+             }
+             
+             [_tableView reloadData];
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
+}
+
+#pragma mark 购物袋编辑数量接口
+- (void)requestEditShopBagGoodNumberWithSection:(int)section andRow:(int)row andNumber:(int)number andSinglePrice:(double)price {
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    NZUser *user = [NZUserManager sharedObject].user ;
+    
+    NSArray *shopBagVMAry = shopBagVMArray[section];
+    NZShopBagViewModel *shopBagVM = shopBagVMAry[row];
+    
+    NSDictionary *parameters = @{
+                                 @"userId":user.userId,
+                                 @"id":[NSNumber numberWithInt:shopBagVM.shopBagGoodModel.goodId],
+                                 @"count":[NSNumber numberWithInt:number]
+                                 } ;
+    
+    [handler postURLStr:webShoppingBagsGoodNumberEdit postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         
+         if( state )
+         {
+             self.editPrice = 0.0;
+             
+             shopBagVM.shopBagGoodModel.count = number;
+             shopBagVM.shopBagGoodModel.totalPrice = number * price;
+             
+             [_tableView reloadData];
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+             
+             self.totalPrice -= self.editPrice;
+             self.editPrice = 0.0;
+             
+             NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"合计￥%.2f",self.totalPrice]];
+             [str addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:NSMakeRange(0, 2)];
+             [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, 3)];
+             [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
+             _totalPriceLab.attributedText = str;
+         }
+     }] ;
+}
+
+#pragma mark 删除购物袋
+- (void)deleteShopBagGood {
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    NZUser *user = [NZUserManager sharedObject].user ;
+    
+    NSArray *shopBagVMAry = shopBagVMArray[deleteSection];
+    NZShopBagViewModel *shopBagVM = shopBagVMAry[deleteRow];
+    
+    NSDictionary *parameters = @{
+                                 @"userId":user.userId,
+                                 @"ids":[NSNumber numberWithInt:shopBagVM.shopBagGoodModel.goodId]
+                                 } ;
+    
+    [handler postURLStr:webShoppingBagsGoodDelete postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         
+         if( state )
+         {
+             NSMutableArray *shopBagVMAry = shopBagVMArray[deleteSection];
+             [shopBagVMAry removeObjectAtIndex:deleteRow];
+             if (shopBagVMAry.count == 0) {
+                 [shopBagVMArray removeObjectAtIndex:deleteSection];
+             }
+             
+             if (deleteState) { // 如果删除的时候是选择状态
+                 self.totalPrice -= deletePrice * deleteNumber; // 总价要加
+                 self.settleNumber --; // 结算个数要加
+                 [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
+             }
+             NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"合计￥%.2f",self.totalPrice]];
+             [str addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:NSMakeRange(0, 2)];
+             [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, 3)];
+             [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
+             _totalPriceLab.attributedText = str;
+             
+             [_tableView reloadData];
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
 }
 
 #pragma mark 添加带阴影的子Layer（层）
@@ -339,24 +606,35 @@
     _settelView.layer.shadowColor = [UIColor blackColor].CGColor; //设置阴影的颜色为黑色
     _settelView.layer.shadowOpacity = 0.9; //设置阴影的不透明度
     
+    _settelView.backgroundColor = BKColor;
+    
 }
 
 #pragma mark 按钮点击事件
 
+- (void)commitSpeAction:(UIButton *)button {
+    [self.view sendSubviewToBack:_specificationsView];
+    [self.view sendSubviewToBack:_shadowView];
+    
+    [_specificationsScrollV removeAllSubviews];
+}
 
 - (IBAction)allSelectAction:(UIButton *)sender {
     // 编辑中不可选
-    if (currentIndex > -1) {
+    if (currentSection > -1) {
         return;
     }
     
     isAllSelect = YES;
     // 判断有没有全选
-    for (int i = 0; i < infoArr.count; i++) {
-        NZCommodityModel *commodityModel = infoArr[i];
-        if (!commodityModel.selectState) {
-            isAllSelect = NO;
-            break;
+    for (int i = 0; i < shopBagVMArray.count; i++) {
+        NSArray *shopBagVMAry = shopBagVMArray[i];
+        for (int j=0; j<shopBagVMAry.count; j++) {
+            NZShopBagViewModel *shopBagVM = shopBagVMAry[j];
+            if (!shopBagVM.shopBagGoodModel.selectState) {
+                isAllSelect = NO;
+                break;
+            }
         }
     }
     
@@ -365,9 +643,12 @@
         [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
         
         _selectImgV.image = [UIImage imageNamed:@"圆-未选"];
-        for (int i = 0; i < infoArr.count; i++) {
-            NZCommodityModel *commodityModel = infoArr[i];
-            commodityModel.selectState = NO;
+        for (int i = 0; i < shopBagVMArray.count; i++) {
+            NSArray *shopBagVMAry = shopBagVMArray[i];
+            for (int j=0; j<shopBagVMAry.count; j++) {
+                NZShopBagViewModel *shopBagVM = shopBagVMAry[j];
+                shopBagVM.shopBagGoodModel.selectState = NO;
+            }
         }
         
         self.totalPrice = 0.0;
@@ -378,17 +659,26 @@
         [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
         _totalPriceLab.attributedText = str;
     } else {
-        self.settleNumber = (int)infoArr.count;
+        int count = 0;
+        for (int i = 0; i < shopBagVMArray.count; i++) {
+            NSArray *shopBagVMAry = shopBagVMArray[i];
+            for (int j=0; j<shopBagVMAry.count; j++) {
+                count ++;
+            }
+        }
+        self.settleNumber = count;
         [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
         
         _selectImgV.image = [UIImage imageNamed:@"圆-已选"];
-        for (int i = 0; i < infoArr.count; i++) {
-            NZCommodityModel *commodityModel = infoArr[i];
-            
-            if (!commodityModel.selectState) {
-                self.totalPrice += commodityModel.commodityNum * [commodityModel.commodityPrice doubleValue];
+        for (int i = 0; i < shopBagVMArray.count; i++) {
+            NSArray *shopBagVMAry = shopBagVMArray[i];
+            for (int j=0; j<shopBagVMAry.count; j++) {
+                NZShopBagViewModel *shopBagVM = shopBagVMAry[j];
+                if (!shopBagVM.shopBagGoodModel.selectState) {
+                    self.totalPrice += shopBagVM.shopBagGoodModel.totalPrice;
+                }
+                shopBagVM.shopBagGoodModel.selectState = YES;
             }
-            commodityModel.selectState = YES;
         }
         
         NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"合计￥%.2f",self.totalPrice]];

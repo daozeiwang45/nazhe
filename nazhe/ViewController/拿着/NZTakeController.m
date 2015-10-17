@@ -263,7 +263,7 @@
              
              contentView.countPrizeLab.text = [NSString stringWithFormat:@"获得奖品%d个",takeModel.CountPrize];
              
-             contentView.versionLab.text = [NSString stringWithFormat:@"当前版本%@",takeModel.Version];
+             contentView.versionLab.text = [NSString stringWithFormat:@"当前版本%@",takeModel.version];
              
          }
          else

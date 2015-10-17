@@ -263,6 +263,10 @@
     [handler postURLStr:webActivityReviewList postDic:parameters
                   block:^(NSDictionary *retInfo, NSError *error)
      {
+         // 结束刷新
+         [reviewTableView.header endRefreshing];
+         [reviewTableView.footer endRefreshing];
+         
          if( error )
          {
              [wSelf.view makeToast:@"网络错误"];
@@ -289,10 +293,6 @@
                  commentVM.review = activityReviewModel.list[i];
                  [commentVMArray addObject:commentVM];
              }
-             
-             // 结束刷新
-             [reviewTableView.header endRefreshing];
-             [reviewTableView.footer endRefreshing];
              
              [reviewTableView reloadData];
              if (pageNo == 1) {

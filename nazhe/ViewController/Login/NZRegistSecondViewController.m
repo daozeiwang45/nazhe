@@ -726,8 +726,8 @@
     headImgView.image = editedImage;
     isSelectedHeadImg = YES;
     // 压缩图片
-    UIImage *scaleImage = [NZGlobal scaleFromImage:editedImage toSize:CGSizeMake(120.0f, 120.0f)];
-    NSData *imageData = UIImageJPEGRepresentation(scaleImage, 0.6);
+    UIImage *scaleImage = [NZGlobal scaleFromImage:editedImage toSize:CGSizeMake(150.0f, 150.0f)];
+    NSData *imageData = UIImageJPEGRepresentation(scaleImage, 1.0);
     
     // 保存头像字节流
     NZRegistInformation *registInformation = [NZUserManager sharedObject].registInfo;

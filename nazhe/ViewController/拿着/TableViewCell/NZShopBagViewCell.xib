@@ -177,6 +177,7 @@
                 <outlet property="bottonLine" destination="00r-DP-b7q" id="1PI-Cd-kSn"/>
                 <outlet property="editBtn" destination="S24-pc-HGR" id="ICo-Na-3Fi"/>
                 <outlet property="imageBackground" destination="apw-wj-QAD" id="Onc-gZ-a8I"/>
+                <outlet property="imgView" destination="gJZ-Wy-SXM" id="h4U-ce-7Xu"/>
                 <outlet property="numLab" destination="Ljb-2b-U5w" id="Cd3-78-5yx"/>
                 <outlet property="priceLab" destination="Yx4-jg-NYi" id="88m-84-JQS"/>
                 <outlet property="selectBtn" destination="7vz-ga-bwy" id="wEm-dC-tXn"/>

@@ -50,7 +50,7 @@
     cacheSize = [self folderSizeAtPath];
     contentView.cacheLab.text = [NSString stringWithFormat:@"%1.fMb",cacheSize];
     
-    [self requestSettingData]; // 请求数据
+    
 }
 
 #pragma mark 初始化界面
@@ -445,6 +445,11 @@
     }];
     
     [super viewDidLayoutSubviews];
+}
+
+#pragma mark 视图出现
+- (void)viewWillAppear:(BOOL)animated {
+    [self requestSettingData]; // 请求数据
 }
 
 #pragma mark 视图消失

@@ -40,9 +40,9 @@
  */
 @property (nonatomic, copy) NSString *bankBranch;
 /**
- *  真实姓名
+ *  银行卡类型
  */
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *category;
 /**
  *  是否为默认
  */

@@ -49,17 +49,22 @@ NSString *webSetDefaultAddress = @"MyAddress/SetDefault"; // 设置默认收货�
 NSString *webDetailAddress = @"MyAddress/Detail"; // 收货地址详细信息接口
 NSString *webAddAddress = @"MyAddress/Add"; // 添加收货地址
 NSString *webEditAddress = @"MyAddress/Update"; // 修改收货地址
-NSString *webDeleteAddress = @"MyAddress/Delete"; // 删除收货地址
+NSString *webDeleteAddress = @"bankCard/delete"; // 删除收货地址
 
 NSString *webTakeFirstPage = @"Client/Personal"; // 拿着一级页面接口
 NSString *webSettingPage = @"client/Set"; // 设置页面接口
 NSString *webMyProfile = @"client/MyProfile"; // 个人资料接口
+NSString *webMyProfileEdit = @"client/MyProfileEdit"; // 修改个人资料接口
 NSString *webBankCardList = @"bankCard/List"; // 银行卡接口
 NSString *webDeleteBankCard = @"BankCard/Delete"; // 删除银行卡接口
 
 NSString *webMyWalletDetail = @"myWallet/Detail"; // 我的钱包接口
 NSString *webMyCouponsList = @"myWallet/MyCouponsList"; // 我的优享券接口
 NSString *webBillRecord = @"myWallet/MyBillList"; // 账单纪录接口
+
+NSString *webShoppingBagsList = @"orders/ShoppingBagsList"; // 购物袋列表接口
+NSString *webShoppingBagsGoodNumberEdit = @"orders/ShoppingBagsEdit"; // 购物袋编辑数量接口
+NSString *webShoppingBagsGoodDelete = @"orders/ShoppingBagsDel"; // 购物袋删除接口
 
 NSString *webServiceHelp = @"client/HelpInfoList"; // 客服帮助接口
 NSString *webServiceMessage = @"client/Feedback"; // 客服留言接口

@@ -76,6 +76,6 @@
 /**
  *  当前版本数
  */
-@property (nonatomic, copy) NSString *Version;
+@property (nonatomic, copy) NSString *version;
 
 @end

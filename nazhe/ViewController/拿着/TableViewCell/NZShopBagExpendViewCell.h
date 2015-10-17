@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NZCommodityModel.h"
+#import "ShopBagModel.h"
 
 @protocol NZShopBagExpendDelegate <NSObject>
 
+- (void)specificationsWithIndex:(int)index;
 - (void)addSelectState:(BOOL)selectState andSinglePrice:(double)price;
 - (void)reduceSelectState:(BOOL)selectState andSinglePrice:(double)price;
 - (void)commitIndex:(int)index andNumber:(int)number andSinglePrice:(double)price;
@@ -22,7 +23,7 @@
 
 @property (strong, nonatomic) IBOutlet UIView *topLine;
 
-@property (nonatomic, strong) NZCommodityModel *commodityModel;
+@property (nonatomic, strong) ShopBagGoodModel *shopBagGoodModel;
 @property (nonatomic, assign) int index;
 @property (nonatomic, assign) double price;
 @property (nonatomic, assign) double totalPrice;
