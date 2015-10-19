@@ -406,7 +406,7 @@
              // 重量
              if (goodSpecModel.weightList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*8/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -426,14 +426,14 @@
                      BagParametersModel *paramsModel = goodSpecModel.weightList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*8/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
-                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*28/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*8/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*8/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
