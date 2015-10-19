@@ -12,6 +12,10 @@
 #import "NZCommodityModel.h"
 #import "ShopBagModel.h"
 #import "NZShopBagViewModel.h"
+#import "GoodSpecificationsModel.h"
+
+#define classFont [UIFont systemFontOfSize:15.f]
+#define specFont [UIFont systemFontOfSize:13.f]
 
 @interface NZShoppingBagViewController ()<UITableViewDataSource, UITableViewDelegate, NZShopBagDelegate, NZShopBagExpendDelegate> {
     
@@ -22,6 +26,8 @@
     
     NSMutableArray *shopBagVMArray; // 购物袋列表视图模型数组
     ShopBagModel *shopBagModel; // 购物袋列表数据存储模型
+    
+    GoodSpecificationsModel *goodSpecModel; // 商品参数模型
     
     int deleteSection; // 要删除的商品的section
     int deleteRow; // 要删除的商品的row
@@ -43,6 +49,9 @@
 @property (nonatomic, strong) UIView *shadowView; // 背景阴影view
 @property (nonatomic, strong) UIView *specificationsView; // 规格选择view
 @property (nonatomic, strong) UIScrollView *specificationsScrollV; // 规格内容scrollView
+@property (nonatomic, strong) UILabel *specClassLab; // 规格种类label
+@property (nonatomic, strong) UIButton *specParamBtn; // 规格参数buuton
+@property (nonatomic, strong) UIView *bottomLine; // 规格种类分割线
 
 - (IBAction)allSelectAction:(UIButton *)sender;
 - (IBAction)settleAction:(UIButton *)sender;
@@ -112,8 +121,8 @@
     [self.view addSubview:_specificationsView];
     [self.view sendSubviewToBack:_specificationsView];
     
-    _specificationsScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth*306/375, ScreenWidth*300/375)];
-    _specificationsScrollV.backgroundColor = [UIColor greenColor];
+    _specificationsScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, ScreenWidth*20/375, ScreenWidth*306/375, ScreenWidth*300/375)];
+    _specificationsScrollV.backgroundColor = [UIColor whiteColor];
     [_specificationsView addSubview:_specificationsScrollV];
     
     UIButton *commitSpeBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*90/375, ScreenWidth*321/375, ScreenWidth*125/375, ScreenWidth*30/375)];
@@ -356,6 +365,412 @@
 }
 
 #pragma mark NZShopBagExpendDelegate
+- (void)specificationsWithSection:(int)section andRow:(int)row {
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    NZUser *user = [NZUserManager sharedObject].user ;
+    
+    NSArray *shopBagVMAry = shopBagVMArray[section];
+    NZShopBagViewModel *shopBagVM = shopBagVMAry[row];
+    
+    NSDictionary *parameters = @{
+                                 @"userId":user.userId,
+                                 @"id":[NSNumber numberWithInt:shopBagVM.shopBagGoodModel.goodId]
+                                 } ;
+    
+    [handler postURLStr:webShoppingBagsSpecs postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         
+         if( state )
+         {
+             goodSpecModel = [GoodSpecificationsModel objectWithKeyValues:retInfo];
+             
+             int startX = ScreenWidth*20/375;
+             int i = 0;
+             
+             // 重量
+             if (goodSpecModel.weightList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 _specClassLab.text = @"重量分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.weightList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.weightList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 规格
+             if (goodSpecModel.sizeList.count != 0) {
+                 
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"规格分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.sizeList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.sizeList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 等级
+             if (goodSpecModel.gradeList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"等级分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.gradeList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.gradeList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 颜色
+             if (goodSpecModel.colorList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"颜色分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.colorList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.colorList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 硬度分类
+             if (goodSpecModel.hardnessList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"硬度分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.hardnessList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.hardnessList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 镶嵌
+             if (goodSpecModel.fillInList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"镶嵌分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.fillInList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.fillInList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+             // 配饰
+             if (goodSpecModel.accessoriesList.count != 0) {
+                 if (i != 0) {
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine.backgroundColor = [UIColor grayColor];
+                     [_specificationsScrollV addSubview:_bottomLine];
+                 } else {
+                     i ++;
+                 }
+                 
+                 if (_bottomLine) {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                 } else {
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+                 }
+                 _specClassLab.text = @"配饰分类";
+                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.font = classFont;
+                 [_specificationsScrollV addSubview:_specClassLab];
+                 
+                 for (int i=0; i<goodSpecModel.accessoriesList.count; i++) {
+                     NSDictionary *attribute = @{NSFontAttributeName:specFont};
+                     CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+                     // 计算尺寸
+                     BagParametersModel *paramsModel = goodSpecModel.accessoriesList[i];
+                     CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                     if (i == 0) {
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         
+                     } else {
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         } else {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             
+                         }
+                     }
+                     _specParamBtn.backgroundColor = BKColor;
+                     [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
+                     if (paramsModel.count == 0) {
+                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         _specParamBtn.userInteractionEnabled = NO;
+                     } else {
+                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                     }
+                     _specParamBtn.titleLabel.font = specFont;
+                     [_specificationsScrollV addSubview:_specParamBtn];
+                 }
+             }
+             
+
+             _specificationsScrollV.contentSize = CGSizeMake(ScreenWidth*306/375, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/37);
+             
+             [self.view bringSubviewToFront:_shadowView];
+             [self.view bringSubviewToFront:_specificationsView];
+             
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
+}
+
 - (void)addSelectState:(BOOL)selectState andSinglePrice:(double)price {
     if (selectState) {
         self.editPrice += price;

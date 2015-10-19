@@ -65,6 +65,7 @@ NSString *webBillRecord = @"myWallet/MyBillList"; // 账单纪录接口
 NSString *webShoppingBagsList = @"orders/ShoppingBagsList"; // 购物袋列表接口
 NSString *webShoppingBagsGoodNumberEdit = @"orders/ShoppingBagsEdit"; // 购物袋编辑数量接口
 NSString *webShoppingBagsGoodDelete = @"orders/ShoppingBagsDel"; // 购物袋删除接口
+NSString *webShoppingBagsSpecs = @"orders/ShoppingBagsSpecs"; // 商品参数编辑接口
 
 NSString *webServiceHelp = @"client/HelpInfoList"; // 客服帮助接口
 NSString *webServiceMessage = @"client/Feedback"; // 客服留言接口

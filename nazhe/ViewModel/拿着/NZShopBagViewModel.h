@@ -30,6 +30,9 @@
 // 向下箭头尺寸
 @property (nonatomic, assign) CGRect downArrowFrame;
 
+// 修改规格按钮尺寸
+@property (nonatomic, assign) CGRect editSpeBtnFrame;
+
 // 动态数量尺寸
 @property (nonatomic, assign) CGRect dyNumberLabFrame;
 

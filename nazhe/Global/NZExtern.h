@@ -66,6 +66,7 @@ extern NSString *webBillRecord; // 账单纪录接口
 extern NSString *webShoppingBagsList; // 购物袋列表接口
 extern NSString *webShoppingBagsGoodNumberEdit; // 购物袋编辑数量接口
 extern NSString *webShoppingBagsGoodDelete; // 购物袋删除接口
+extern NSString *webShoppingBagsSpecs; // 商品参数编辑接口
 
 extern NSString *webServiceHelp; // 客服帮助接口
 extern NSString *webServiceMessage; // 客服留言接口

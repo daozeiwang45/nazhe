@@ -36,6 +36,9 @@
     // 向下箭头尺寸
     _downArrowFrame = CGRectMake(CGRectGetMaxX(_specificationsFrame)+ScreenWidth*4/375, (CGRectGetMaxY(_specificationsFrame)-_specificationsFrame.origin.y)/2+_specificationsFrame.origin.y-ScreenWidth*4/375, ScreenWidth*16/375, ScreenWidth*8/375);
     
+    // 修改规格按钮尺寸
+    _editSpeBtnFrame = CGRectMake(ScreenWidth*154/375, ScreenWidth*65/375, ScreenWidth-ScreenWidth*174/375, _specificationsFrame.size.height);
+    
     // 减一尺寸
     _reduceBtnFrame = CGRectMake(_specificationsFrame.origin.x, CGRectGetMaxY(_specificationsFrame)+ScreenWidth*10/375, ScreenWidth*28/375, ScreenWidth*22/375);
     

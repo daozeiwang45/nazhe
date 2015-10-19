@@ -110,6 +110,12 @@
     downArrow.image = [UIImage imageNamed:@"钱包下键"];
     [self.contentView addSubview:downArrow];
     
+    // 点击编辑规格的按钮
+    editSpeBtn = [[UIButton alloc] init];
+    editSpeBtn.backgroundColor = [UIColor clearColor];
+    [editSpeBtn addTarget:self action:@selector(editSpeAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.contentView addSubview:editSpeBtn];
+    
     // 减一按钮
     reduceBtn = [[UIButton alloc] init];
     [reduceBtn setBackgroundImage:[UIImage imageNamed:@"-"] forState:UIControlStateNormal];
@@ -181,6 +187,8 @@
     
     downArrow.frame = shopBagViewModel.downArrowFrame;
     
+    editSpeBtn.frame = shopBagViewModel.editSpeBtnFrame;
+    
     dyNumLab.frame = shopBagViewModel.dyNumberLabFrame;
     dyNumLab.text = [NSString stringWithFormat:@"%d",shopBagViewModel.shopBagGoodModel.count];
     self.number = shopBagViewModel.shopBagGoodModel.count;
@@ -196,6 +204,10 @@
     line.frame = shopBagViewModel.lineFrame;
     
     self.selectState = shopBagViewModel.shopBagGoodModel.selectState;
+}
+
+- (void)editSpeAction:(UIButton *)button {
+    [self.delegate specificationsWithSection:self.section andRow:self.row];
 }
 
 - (void)addNumberAction:(UIButton *)sender {

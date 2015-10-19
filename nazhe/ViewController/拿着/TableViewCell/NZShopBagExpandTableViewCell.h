@@ -11,7 +11,7 @@
 
 @protocol NZShopBagExpendDelegate <NSObject>
 
-//- (void)specificationsWithSection:(int)section andRow:(int)row;
+- (void)specificationsWithSection:(int)section andRow:(int)row;
 - (void)addSelectState:(BOOL)selectState andSinglePrice:(double)price;
 - (void)reduceSelectState:(BOOL)selectState andSinglePrice:(double)price;
 - (void)commitWithSection:(int)section andRow:(int)row andNumber:(int)number andSinglePrice:(double)price;
