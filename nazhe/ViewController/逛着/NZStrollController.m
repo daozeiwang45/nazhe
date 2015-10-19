@@ -109,6 +109,7 @@
     rightFloat = (ScreenWidth - 2) / 6 * 5 + 2 - 5;
     _indicateArrowLeftConstraint.constant = leftFloat;
     
+    
     [self requestMaterialData];
     
     [self initMaterialAndStyleInterface];  // 初始化材质、款式tableview
@@ -136,12 +137,14 @@
 #pragma mark 初始化优惠活动tableview
 - (void)initActivitiesAllInterface {
     
+    _timeIndex = 0;
     self.imagesURLInActivitiesArry = [NSMutableArray new];
     self.activitiesTimeDetailInfoArry = [NSMutableArray new];
     self.imagesOtherURLInActivitiesArry = [NSMutableArray new];
     self.activitiesNewDetailInfoArry = [NSMutableArray new];
     self.activitiesCouponsDetailInfoArry = [NSMutableArray new];
     self.activitiesMajorSuitDetailInfoArry = [NSMutableArray new];
+    
     
     _acType = enumtActivitiesType_Grab; // 首先展示限时抢活动界面
     
@@ -277,6 +280,7 @@
 
 #pragma mark 限时抢头部视图
 - (UIView *)createGrabHeaderView {
+    
     UIView *grabHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 75)];
     grabHeaderView.backgroundColor = [UIColor whiteColor];
     
@@ -304,91 +308,232 @@
     UIView *divisionLine4 = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*4/5, 10, 1, 30)];
     divisionLine4.backgroundColor = [UIColor whiteColor];
     [timeView addSubview:divisionLine4];
-    // 提示正在抢
-    UIView *redView = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*2/5, 0, ScreenWidth/5, 50)];
-    redView.backgroundColor = darkRedColor;
-    [timeView addSubview:redView];
     
-    UIView *time1V = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth/5, 50)];
-    time1V.backgroundColor = [UIColor clearColor];
-    UILabel *time1Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
-    time1Lab.text = @"09:00";
-    time1Lab.textColor = [UIColor whiteColor];
-    time1Lab.font = [UIFont systemFontOfSize:16.f];
-    time1Lab.textAlignment = NSTextAlignmentCenter;
-    [time1V addSubview:time1Lab];
-    UILabel *time1Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
-    time1Icon.text = @"已抢完";
-    time1Icon.textColor = [UIColor whiteColor];
-    time1Icon.font = [UIFont systemFontOfSize:16.f];
-    time1Icon.textAlignment = NSTextAlignmentCenter;
-    [time1V addSubview:time1Icon];
-    [timeView addSubview:time1V];
     
-    UIView *time2V = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth/5, 0, ScreenWidth/5, 50)];
-    time2V.backgroundColor = [UIColor clearColor];
-    UILabel *time2Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
-    time2Lab.text = @"11:00";
-    time2Lab.textColor = [UIColor whiteColor];
-    time2Lab.font = [UIFont systemFontOfSize:16.f];
-    time2Lab.textAlignment = NSTextAlignmentCenter;
-    [time2V addSubview:time2Lab];
-    UILabel *time2Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
-    time2Icon.text = @"已抢完";
-    time2Icon.textColor = [UIColor whiteColor];
-    time2Icon.font = [UIFont systemFontOfSize:16.f];
-    time2Icon.textAlignment = NSTextAlignmentCenter;
-    [time2V addSubview:time2Icon];
-    [timeView addSubview:time2V];
+    //下面为网络请求获取时间段
+    __weak typeof(self)wSelf = self ;
     
-    UIView *time3V = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*2/5, 0, ScreenWidth/5, 50)];
-    time3V.backgroundColor = [UIColor clearColor];
-    UILabel *time3Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
-    time3Lab.text = @"13:00";
-    time3Lab.textColor = [UIColor whiteColor];
-    time3Lab.font = [UIFont systemFontOfSize:16.f];
-    time3Lab.textAlignment = NSTextAlignmentCenter;
-    [time3V addSubview:time3Lab];
-    UILabel *time3Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
-    time3Icon.text = @"正在抢";
-    time3Icon.textColor = [UIColor whiteColor];
-    time3Icon.font = [UIFont systemFontOfSize:16.f];
-    time3Icon.textAlignment = NSTextAlignmentCenter;
-    [time3V addSubview:time3Icon];
-    [timeView addSubview:time3V];
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
     
-    UIView *time4V = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*3/5, 0, ScreenWidth/5, 50)];
-    time4V.backgroundColor = [UIColor clearColor];
-    UILabel *time4Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
-    time4Lab.text = @"15:00";
-    time4Lab.textColor = [UIColor whiteColor];
-    time4Lab.font = [UIFont systemFontOfSize:16.f];
-    time4Lab.textAlignment = NSTextAlignmentCenter;
-    [time4V addSubview:time4Lab];
-    UILabel *time4Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
-    time4Icon.text = @"已抢完";
-    time4Icon.textColor = [UIColor whiteColor];
-    time4Icon.font = [UIFont systemFontOfSize:16.f];
-    time4Icon.textAlignment = NSTextAlignmentCenter;
-    [time4V addSubview:time4Icon];
-    [timeView addSubview:time4V];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    UIView *time5V = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*4/5, 0, ScreenWidth/5, 50)];
-    time5V.backgroundColor = [UIColor clearColor];
-    UILabel *time5Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
-    time5Lab.text = @"17:00";
-    time5Lab.textColor = [UIColor whiteColor];
-    time5Lab.font = [UIFont systemFontOfSize:16.f];
-    time5Lab.textAlignment = NSTextAlignmentCenter;
-    [time5V addSubview:time5Lab];
-    UILabel *time5Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
-    time5Icon.text = @"已抢完";
-    time5Icon.textColor = [UIColor whiteColor];
-    time5Icon.font = [UIFont systemFontOfSize:16.f];
-    time5Icon.textAlignment = NSTextAlignmentCenter;
-    [time5V addSubview:time5Icon];
-    [timeView addSubview:time5V];
+    hud.labelText = @"请稍候..." ;
     
+    NSDictionary *parameters = @{
+                                 
+                                 @"page_no":[NSNumber numberWithInt:1]
+                                 
+                                 };
+    [handler postURLStr:webGetLimitedList postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+         
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         if( state )
+         {
+             self.activitiesTimeDetailTimeArry = [NSMutableArray new];
+             NSArray *infoArry = [retInfo objectForKey:@"periodOfTime"];
+             [self.activitiesTimeDetailTimeArry addObjectsFromArray:infoArry];
+             
+             
+             // ---------5个时间结点----------------
+             
+             //index  来判断看哪个时间结点正在抢
+             int myTimeIndex = 0;
+             //----获取现在的时间-----
+             NSDate * senddate=[NSDate date];
+             NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
+             
+            [dateformatter setDateFormat:@"yyyy-MM-dd"];
+             NSString *dateString = [dateformatter stringFromDate:senddate];
+
+             for (int i= 0 ;i<=3;i++ ) {
+                 
+                 NSString *timeStr = [self.activitiesTimeDetailTimeArry[i]objectForKey:@"timeValue"];
+                 NSString *timeStr1 = [self.activitiesTimeDetailTimeArry[i+1]objectForKey:@"timeValue"];
+                 
+                 NSString *grabTime1 = [NSString stringWithFormat:@"%@ %@",dateString,timeStr];
+                  NSString *grabTime2 = [NSString stringWithFormat:@"%@ %@",dateString,timeStr1];
+                 [dateformatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                 NSDate *grabTime11 = [dateformatter dateFromString:grabTime1];
+                 NSDate *grabTime22 = [dateformatter dateFromString:grabTime2];
+                 
+                 BOOL result11 = [grabTime11 isEarlizerThanDate:senddate];
+                 BOOL result22 = [grabTime22 isLaterThanDate:senddate];
+                 if (result11 == YES && result22 == YES) {
+                     myTimeIndex = i+1;
+                 }
+             }
+             if (myTimeIndex == 0) {
+                 myTimeIndex =5;
+             }
+             
+             UIButton *time1Button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth/5, 50)];
+             //time1Button.backgroundColor = darkRedColor;
+             time1Button.tag = 201;
+             [time1Button addTarget:self action:@selector(timeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+             
+             UILabel *time1Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
+             time1Lab.text = [[self.activitiesTimeDetailTimeArry objectAtIndex:0]objectForKey:@"timeValue"];
+             time1Lab.textColor = [UIColor whiteColor];
+             time1Lab.font = [UIFont systemFontOfSize:16.f];
+             time1Lab.textAlignment = NSTextAlignmentCenter;
+             [time1Button addSubview:time1Lab];
+             UILabel *time1Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
+             time1Icon.text = @"正在抢";
+             time1Icon.textColor = [UIColor whiteColor];
+             time1Icon.font = [UIFont systemFontOfSize:16.f];
+             time1Icon.textAlignment = NSTextAlignmentCenter;
+             [time1Button addSubview:time1Icon];
+             [timeView addSubview:time1Button];
+             if (myTimeIndex == 1) {
+                 time1Button.backgroundColor = darkRedColor;
+             }
+             if (self.activitiesTimeDetailInfoArry.count == 0) {
+                 //time1Icon.text = @"已抢完";
+             }else{
+             
+                 time1Icon.text = @"正在抢";
+             }
+             
+             UIButton *time2Button = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/5, 0, ScreenWidth/5, 50)];
+            //time2Button.backgroundColor = [UIColor clearColor];
+             time2Button.tag = 202;
+             [time2Button addTarget:self action:@selector(timeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+             
+             UILabel *time2Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
+              time2Lab.text = [[self.activitiesTimeDetailTimeArry objectAtIndex:1]objectForKey:@"timeValue"];
+             time2Lab.textColor = [UIColor whiteColor];
+             time2Lab.font = [UIFont systemFontOfSize:16.f];
+             time2Lab.textAlignment = NSTextAlignmentCenter;
+             [time2Button addSubview:time2Lab];
+             UILabel *time2Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
+             time2Icon.text = @"正在抢";
+             time2Icon.textColor = [UIColor whiteColor];
+             time2Icon.font = [UIFont systemFontOfSize:16.f];
+             time2Icon.textAlignment = NSTextAlignmentCenter;
+             [time2Button addSubview:time2Icon];
+             [timeView addSubview:time2Button];
+             if (myTimeIndex == 2) {
+                 time2Button.backgroundColor = darkRedColor;
+             }
+             if (self.activitiesTimeDetailInfoArry.count == 0) {
+                 //time2Icon.text = @"已抢完";
+             }else{
+                 
+                 time2Icon.text = @"正在抢";
+             }
+
+             
+             UIButton *time3Button = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*2/5, 0, ScreenWidth/5, 50)];
+             time3Button.backgroundColor = [UIColor clearColor];
+             time3Button.tag = 203;
+             [time3Button addTarget:self action:@selector(timeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+             
+             UILabel *time3Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
+             time3Lab.text = [[self.activitiesTimeDetailTimeArry objectAtIndex:2]objectForKey:@"timeValue"];
+             time3Lab.textColor = [UIColor whiteColor];
+             time3Lab.font = [UIFont systemFontOfSize:16.f];
+             time3Lab.textAlignment = NSTextAlignmentCenter;
+             [time3Button addSubview:time3Lab];
+             UILabel *time3Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
+             time3Icon.text = @"正在抢";
+             time3Icon.textColor = [UIColor whiteColor];
+             time3Icon.font = [UIFont systemFontOfSize:16.f];
+             time3Icon.textAlignment = NSTextAlignmentCenter;
+             [time3Button addSubview:time3Icon];
+             [timeView addSubview:time3Button];
+             if (myTimeIndex == 3) {
+                 time3Button.backgroundColor = darkRedColor;
+             }
+             if (self.activitiesTimeDetailInfoArry.count == 0) {
+                 //time3Icon.text = @"已抢完";
+             }else{
+                 
+                 time3Icon.text = @"正在抢";
+             }
+
+             
+             UIButton *time4Button = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*3/5, 0, ScreenWidth/5, 50)];
+             time4Button.backgroundColor = [UIColor clearColor];
+             time4Button.tag = 204;
+             [time4Button addTarget:self action:@selector(timeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+             
+             UILabel *time4Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
+             time4Lab.text = [[self.activitiesTimeDetailTimeArry objectAtIndex:3]objectForKey:@"timeValue"];
+             time4Lab.textColor = [UIColor whiteColor];
+             time4Lab.font = [UIFont systemFontOfSize:16.f];
+             time4Lab.textAlignment = NSTextAlignmentCenter;
+             [time4Button addSubview:time4Lab];
+             UILabel *time4Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
+             time4Icon.text = @"正在抢";
+             time4Icon.textColor = [UIColor whiteColor];
+             time4Icon.font = [UIFont systemFontOfSize:16.f];
+             time4Icon.textAlignment = NSTextAlignmentCenter;
+             [time4Button addSubview:time4Icon];
+             [timeView addSubview:time4Button];
+             if (myTimeIndex == 4) {
+                 time4Button.backgroundColor = darkRedColor;
+             }
+             if (self.activitiesTimeDetailInfoArry.count == 0) {
+                 time4Icon.text = @"已抢完";
+             }else{
+                 
+                 time4Icon.text = @"正在抢";
+             }
+
+             
+             UIButton *time5Button = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*4/5, 0, ScreenWidth/5, 50)];
+             time5Button.backgroundColor = [UIColor clearColor];
+             time5Button.tag = 205;
+             [time5Button addTarget:self action:@selector(timeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+             
+             UILabel *time5Lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, ScreenWidth/5, 20)];
+             time5Lab.text = [[self.activitiesTimeDetailTimeArry objectAtIndex:4]objectForKey:@"timeValue"];
+             time5Lab.textColor = [UIColor whiteColor];
+             time5Lab.font = [UIFont systemFontOfSize:16.f];
+             time5Lab.textAlignment = NSTextAlignmentCenter;
+             [time5Button addSubview:time5Lab];
+             UILabel *time5Icon = [[UILabel alloc] initWithFrame:CGRectMake(0, 25, ScreenWidth/5, 20)];
+             time5Icon.text = @"正在抢";
+             time5Icon.textColor = [UIColor whiteColor];
+             time5Icon.font = [UIFont systemFontOfSize:16.f];
+             time5Icon.textAlignment = NSTextAlignmentCenter;
+             [time5Button addSubview:time5Icon];
+             [timeView addSubview:time5Button];
+             if (myTimeIndex == 5) {
+                 time5Button.backgroundColor = darkRedColor;
+             }
+             if (self.activitiesTimeDetailInfoArry.count == 0) {
+                 time5Icon.text = @"已抢完";
+             }else{
+                 
+                 time5Icon.text = @"正在抢";
+             }
+
+             
+             
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
+    
+    
+
     UILabel *tipLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 50, ScreenWidth/2+12, 25)];
     tipLab.text = @"距离本场活动结束  ";
     tipLab.textColor = [UIColor blackColor];
@@ -408,7 +553,7 @@
     [countDownTimer setCountDownTime:01*3600 + 20*60 + 15]; //** Or you can use [timer3 setCountDownToDate:aDate];
     [countDownTimer start];
     [grabHeaderView addSubview:tipTimeLab];
-    
+
     return grabHeaderView;
 }
 
@@ -927,18 +1072,18 @@
             }
             
             // 给马上抢添加点击方法 ---------------
-            NSNumber *num = [[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"GoodsId"];
+            NSNumber *num = [[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"goodsId"];
             cell.quicklyButton.tag = 900+[num integerValue];
             [cell.quicklyButton addTarget:self action:@selector(quicklyButtonAction:) forControlEvents:UIControlEventTouchUpInside];
             
             //图片地址
-            NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"SmallNewsImg"]];
+            NSString *smallImg =[NZGlobal GetImgBaseURL:[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row] objectForKey:@"listImg"]];
             NSURL *imgURL = [NSURL URLWithString:smallImg];
             [cell.productImageV sd_setImageWithURL:imgURL placeholderImage:defaultImage];
-            cell.grabTittleLab.text = [NSString stringWithFormat:@"【限时抢】%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"GoodsName"]];
-            cell.marketPriceLab.text = [NSString stringWithFormat:@"原价￥%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"MarketPrice"]];
-            cell.nowPriceLab.text = [NSString stringWithFormat:@"￥%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"PriceNow"]];
-            cell.leftNumLab.text = [NSString stringWithFormat:@"还剩%@件",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"Count"]];
+            cell.grabTittleLab.text = [NSString stringWithFormat:@"【限时抢】%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"title"]];
+            cell.marketPriceLab.text = [NSString stringWithFormat:@"原价￥%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"marketPrice"]];
+            cell.nowPriceLab.text = [NSString stringWithFormat:@"￥%@",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"priceNow"]];
+            cell.leftNumLab.text = [NSString stringWithFormat:@"还剩%@件",[[self.activitiesTimeDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"count"]];
             
             return cell;
         } else if (_acType == enumtActivitiesType_newProduct) {
@@ -990,9 +1135,10 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
             
-            //看是否已经领取
+            //看是否已经领取----当type=0时，state=0表示未领取，state=1表示已领取
+            //-----当type=1时，state=0表示未兑换，state=1表示已兑换
             int state = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"state"]intValue];
-            //看时领取还是兑换
+            //看时领取还是兑换---类型（0:代金券,1:兑换）
             int type = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"type"]intValue];
             
             if (type == 0) {
@@ -1001,7 +1147,9 @@
 
                 if (state == 0) {
                     
-                    cell.haveLable.text = @"已领取";
+                    cell.haveLable.text = @"立即领取";
+                    cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
+                    [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
                     
                 }else if(state == 1){
                     
@@ -1022,7 +1170,9 @@
 
                 if (state == 0) {
                     
-                    cell.haveLable.text = @"已兑换";
+                    cell.haveLable.text = @"立即兑换";
+                    cell.haveButton.tag = [[[self.activitiesCouponsDetailInfoArry objectAtIndex:indexPath.row]objectForKey:@"cId"]integerValue];
+                    [cell.haveButton addTarget:self action:@selector(requestActivitiesWithHaveCoupons:) forControlEvents:UIControlEventTouchUpInside];
                     
                 }else if(state == 1){
                     
@@ -1307,6 +1457,54 @@
      }] ;
 }
 
+#pragma mark 请求优惠活动---限时抢---时间阶段
+- (void)requestActivitiesWithLimitTime{
+    
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    hud.labelText = @"请稍候..." ;
+    
+    NSDictionary *parameters = @{
+                                 
+                                 @"page_no":[NSNumber numberWithInt:1]
+                                     
+                                     };
+    [handler postURLStr:webGetLimitedList postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+         
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         if( state )
+         {
+             self.activitiesTimeDetailTimeArry = [NSMutableArray new];
+             NSArray *infoArry = [retInfo objectForKey:@"periodOfTime"];
+              [self.activitiesTimeDetailTimeArry addObjectsFromArray:infoArry];
+             
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+         }
+     }] ;
+}
+
+
 #pragma mark 请求优惠活动---限时抢---数据
 - (void)requestActivitiesWithLimitTimeData{
     
@@ -1318,9 +1516,13 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     hud.labelText = @"请稍候..." ;
+    
+    NSString *timeStr = [[self.activitiesTimeDetailTimeArry objectAtIndex:_timeIndex]objectForKey:@"timeValue"];
+    
     NSDictionary *parameters = @{
                                  
-                                 @"page_no":[NSNumber numberWithInt:self.pageNo]
+                                 @"page_no":[NSNumber numberWithInt:self.pageNo],
+                                 @"timeValue":timeStr
                                  
                                  };
     [handler postURLStr:webGetLimitedList postDic:parameters
@@ -1344,22 +1546,18 @@
          {
              [_activityTableView.footer endRefreshing];
              NSArray *infoArry = [[retInfo objectForKey:@"result"]objectForKey:@"detailInfo"];
+             //给图片轮播图片赋值
+             for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
+                 
+                 [self.imagesURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
+             }
+             //信息初始化
+             [self initActivitiesInterface:self.imagesURLInActivitiesArry];
              
              if (infoArry.count > 0) {
-                 
-                 //给图片轮播图片赋值
-                 for (NSDictionary *imgDict in [retInfo objectForKey:@"brandAdvert"]) {
-                     
-                     [self.imagesURLInActivitiesArry addObject:[NZGlobal GetImgBaseURL:[imgDict objectForKey:@"imgUrl"]]];
-                 }
-                 
-                 //信息初始化
-                 [self initActivitiesInterface:self.imagesURLInActivitiesArry];
-                 
+  
                  //把基本信息self.activitiesDetailInfoArry
                  [self.activitiesTimeDetailInfoArry addObjectsFromArray:infoArry];
-                 
-                 [_activityTableView reloadData];
 
              }else{
                  //结束上拉刷新
@@ -1367,7 +1565,7 @@
                  
              }
              
-         
+             [_activityTableView reloadData];
          }
          else
          {
@@ -1721,7 +1919,31 @@
         [self.navigationController pushViewController:commodityListViewCtr animated:YES];
     }
 }
-
+#pragma mark 时间结点点击事件
+- (void)timeButtonAction:(UIButton *)sender {
+    
+    [self.imagesURLInActivitiesArry removeAllObjects];;
+    [self.activitiesTimeDetailInfoArry removeAllObjects];
+    self.pageNo = 0;
+    _timeIndex = (int)sender.tag-200-1;
+    
+    grabImgV.image = [UIImage imageNamed:@"限时抢-红"];
+    nProductImgV.image = [UIImage imageNamed:@"新品汇-灰"];
+    couponsImgV.image = [UIImage imageNamed:@"优惠券-灰"];
+    majorImgV.image = [UIImage imageNamed:@"大牌档-灰"];
+    grabLab.textColor = darkRedColor;
+    nProductLab.textColor = [UIColor grayColor];
+    couponsLab.textColor = [UIColor grayColor];
+    majorLab.textColor = [UIColor grayColor];
+    // 刷新限时抢
+    _acType = enumtActivitiesType_Grab;
+    
+    //加载限时抢数据
+    _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithLimitTimeData)];
+    // 马上进入刷新状态
+    [_activityTableView.footer beginRefreshing];
+    
+}
 #pragma mark 其它点击事件
 - (void)classClick:(UIButton *)button { // 优惠活动四个活动按钮事件
     self.pageNo = 0;
@@ -1745,6 +1967,7 @@
             majorLab.textColor = [UIColor grayColor];
             // 刷新限时抢
             _acType = enumtActivitiesType_Grab;
+            
            //加载限时抢数据
             _activityTableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(requestActivitiesWithLimitTimeData)];
             // 马上进入刷新状态

@@ -11,7 +11,7 @@
 #import "NZOrderPayViewController.h"
 
 
-@interface NZOrderConfirmViewController ()
+@interface NZOrderConfirmViewController ()<UIAlertViewDelegate>
 
 @property (nonatomic,strong)NSDictionary *addressDict;
 @property (nonatomic,strong)NSDictionary *orderPayDict;
@@ -53,6 +53,9 @@
     self.userName.text = [self.addressDict objectForKey:@"name"];
     self.userPhoneNumber.text = [self.addressDict objectForKey:@"phone"];
     self.userAddress.text = [self.addressDict objectForKey:@"addressDetail"];
+//    if () {
+//        <#statements#>
+//    }
     NSNumber *numHeight = [self calculateHightWithText:self.userAddress.text];
     self.addressHeight.constant = [numHeight floatValue];
 }
@@ -67,11 +70,12 @@
     
     hud.labelText = @"请稍候..." ;
     
-    // NZUser *user = [NZUserManager sharedObject].user;
+    NZUser *user = [NZUserManager sharedObject].user;
     
     NSDictionary *parameters = @{
                                  
-                                 @"userId":[NSNumber numberWithInt:6]
+                                 @"userId":user.userId,
+                                 @"token":@""
                                  
                                  };
     NSString *webGoodParameters = @"Goods/BuyNow";
@@ -96,11 +100,17 @@
          
          if( state )
          {
+             NSArray *infoArry = [retInfo objectForKey:@"addressInfo"];
+             if (infoArry.count!=0) {
+                 
+                 self.addressDict = [[retInfo objectForKey:@"addressInfo"]objectAtIndex:0];
+                 NSLog(@"########---%@",self.addressDict);
+                 //数据请求完-------初始化页面
+                 [self initView];
+
+             }
              
-             self.addressDict = [[retInfo objectForKey:@"addressInfo"]objectAtIndex:0];
-             NSLog(@"########---%@",self.addressDict);
-             //数据请求完-------初始化页面
-             [self initView];
+             
          }
          else
          {
@@ -120,10 +130,10 @@
     
     hud.labelText = @"请稍候..." ;
     
-    // NZUser *user = [NZUserManager sharedObject].user;
+    NZUser *user = [NZUserManager sharedObject].user;
     
     NSDictionary *parameters = @{
-                                 @"userId":[NSNumber numberWithInt:6],
+                                 @"userId":user.userId,
                                  @"goodsId":[NSNumber numberWithInt:53],
                                  @"count":[NSNumber numberWithInt:self.goodPayNum],
                                  @"totalPrice":[NSNumber numberWithFloat:self.goodPayPrice],
@@ -223,10 +233,32 @@
 }
 - (IBAction)payMomeyButtonAction:(UIButton *)sender {
     
-    _orderPayViewCtr = [[NZOrderPayViewController alloc] initWithNibName:@"NZOrderPayViewController" bundle:nil];
-    //做生成订单网络请求
-    [self loadDataOrderPay];
+    if (self.addressDict == nil) {
+        
+        UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:@"提示" message:@"收货地址不能为空，请添加收货地址！" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        [alertV show];
+
+        
+    }else{
+        
+        _orderPayViewCtr = [[NZOrderPayViewController alloc] initWithNibName:@"NZOrderPayViewController" bundle:nil];
+        //做生成订单网络请求
+        [self loadDataOrderPay];
+    }
+    
    
+}
+
+#pragma mark alertView  代理
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    if (buttonIndex == 1) {
+        
+        NZDeliveryAddressViewController *addressVCTR = [[NZDeliveryAddressViewController alloc] init];
+        //    addressVCTR.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:addressVCTR animated:YES];
+
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
