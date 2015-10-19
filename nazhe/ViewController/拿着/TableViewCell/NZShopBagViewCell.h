@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NZCommodityModel.h"
+#import "ShopBagModel.h"
 
 @protocol NZShopBagDelegate <NSObject>
 
@@ -29,7 +29,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *numLab;
 
 
-@property (nonatomic, strong) NZCommodityModel *commodityModel;
+@property (nonatomic, strong) ShopBagGoodModel *shopBagGoodModel;
 @property (nonatomic, assign) int index;
 @property (nonatomic, assign) double price;
 @property (nonatomic, assign) double totalPrice;

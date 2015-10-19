@@ -10,12 +10,15 @@
 #import "NJImageCropperViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "MyProfileModel.h"
+#import "FileDetail.h"
+#import "SDPhotoBrowser.h"
 
 #define ORIGINAL_MAX_WIDTH 640.0f
 
-@interface NZPersonalViewController ()<UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIActionSheetDelegate, NJImageCropperDelegate> {
+@interface NZPersonalViewController ()<UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIActionSheetDelegate, NJImageCropperDelegate, SDPhotoBrowserDelegate, UIPickerViewDataSource, UIPickerViewDelegate> {
     UIScrollView *scrollView;
     
+    UIView *headView;
     UIImageView *headImgView; // 头像
     UIView *maskView;
     UILabel *headLab;
@@ -28,6 +31,7 @@
     UILabel *phoneLab; // 手机绑定
     UILabel *nickNameLab; // 昵称
     UIButton *addBtn; // 添加推荐人按钮
+    UITextField *recommendTextF; // 推荐人昵称输入框
     
     UILabel *myLvLab; // 等级
     UILabel *myIDLab; // ID号
@@ -47,6 +51,7 @@
     UIButton *saveBtn;
     
     // 底线
+    UIView *bottomLine;
     UIView *bottomLine1;
     UIView *bottomLine2;
     UIView *bottomLine3;
@@ -56,6 +61,16 @@
     UIImageView *rightArrow2;
     
     MyProfileModel *myProfileModel; // 个人资料模型
+    
+    NSArray *provinecesArray; // 省份城市数组数据
+    NSArray *jobsArray; // 职业数组数据
+    enumtPickerViewType pickerViewType; // 当前是哪种pickerview
+    UIView *pickViewBackView; // pickview的透明背景view，防止点击其它控件
+    UIPickerView *areaPicker; // 地区选择器
+    UIPickerView *jobPicker; // 职业选择器
+    
+//    UIActionSheet *choiceSheet; // 查看大图或修改头像
+//    UIActionSheet *editStyleSheet; // 选择修改头像方式sheet
 }
 
 @end
@@ -69,10 +84,14 @@
     [self createNavigationItemTitleViewWithTitle:@"个人资料"];
     [self leftButtonTitle:nil];
     
-    
     [self initInterface]; // 初始化个人资料界面
     [self requestMyProfile]; // 请求个人资料
     
+    NSString *path1 = [[NSBundle mainBundle] pathForResource:@"city" ofType:@"plist"];
+    provinecesArray = [NSArray arrayWithContentsOfFile:path1];
+    
+    NSString *path2 = [[NSBundle mainBundle] pathForResource:@"job" ofType:@"plist"];
+    jobsArray = [NSArray arrayWithContentsOfFile:path2];
 }
 
 #pragma mark 初始化个人资料界面
@@ -101,7 +120,7 @@
     [scrollView addSubview:editBtn];
     
     /*************************  头像  ********************************/
-    UIView *headView = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*40/375, ScreenWidth*20/375, ScreenWidth*100/375, ScreenWidth*100/375)];
+    headView = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth*40/375, ScreenWidth*20/375, ScreenWidth*100/375, ScreenWidth*100/375)];
     headView.backgroundColor = [UIColor whiteColor];
     [headView.layer setCornerRadius:(headView.frame.size.height/2)];
     [headView.layer setMasksToBounds:YES];
@@ -114,6 +133,7 @@
     headImgView.backgroundColor = [UIColor whiteColor];
     UITapGestureRecognizer *portraitTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(editPortrait)];
     [headImgView addGestureRecognizer:portraitTap];
+    headImgView.userInteractionEnabled = YES;
     [headView addSubview:headImgView];
     
     maskView = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenWidth*75/375, ScreenWidth*100/375, ScreenWidth*25/375)];
@@ -157,11 +177,28 @@
     recommendedLab.font = [UIFont systemFontOfSize:13.f];
     [scrollView addSubview:recommendedLab];
     
-    addBtn = [[UIButton alloc] initWithFrame:CGRectMake(recommendedLab.origin.x+50, recommendedLab.origin.y, 30, 15)];
+    addBtn = [[UIButton alloc] initWithFrame:CGRectMake(recommendedLab.origin.x+50, recommendedLab.origin.y, ScreenWidth-ScreenWidth*195/375-50, 15)];
     [addBtn setTitle:@"添加" forState:UIControlStateNormal];
     [addBtn setTitleColor:darkRedColor forState:UIControlStateNormal];
     addBtn.titleLabel.font = [UIFont systemFontOfSize:13.f];
+    addBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    addBtn.userInteractionEnabled = NO;
+    [addBtn addTarget:self action:@selector(recommendAction:) forControlEvents:UIControlEventTouchUpInside];
     [scrollView addSubview:addBtn];
+    
+    recommendTextF = [[UITextField alloc] initWithFrame:addBtn.frame];
+    recommendTextF.placeholder = @"请输入推荐人昵称";
+    recommendTextF.clearButtonMode = UITextFieldViewModeWhileEditing;
+    recommendTextF.font = [UIFont boldSystemFontOfSize:13];
+    recommendTextF.backgroundColor = [UIColor clearColor];
+    recommendTextF.hidden = YES;
+    [scrollView addSubview:recommendTextF];
+    
+    // 输入框底线
+    bottomLine = [[UIView alloc] initWithFrame:CGRectMake(recommendTextF.origin.x, CGRectGetMaxY(recommendTextF.frame)+3, recommendTextF.frame.size.width, 0.5)];
+    bottomLine.backgroundColor = [UIColor lightGrayColor];
+    bottomLine.hidden = YES;
+    [scrollView addSubview:bottomLine];
     
     // 虚线
     UIImageView *line1 = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth*40/375, CGRectGetMaxY(headView.frame)+ScreenWidth*20/375, ScreenWidth-ScreenWidth*80/375, 1)];
@@ -223,6 +260,7 @@
     [areaBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     areaBtn.titleLabel.font = [UIFont systemFontOfSize:15.f];
     areaBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    [areaBtn addTarget:self action:@selector(areaPickerView:) forControlEvents:UIControlEventTouchUpInside];
     [scrollView addSubview:areaBtn];
     
     // 输入框底线
@@ -259,6 +297,8 @@
     [occupationBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     occupationBtn.titleLabel.font = [UIFont systemFontOfSize:15.f];
     occupationBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    occupationBtn.userInteractionEnabled = NO;
+    [occupationBtn addTarget:self action:@selector(jobPickerView:) forControlEvents:UIControlEventTouchUpInside];
     [scrollView addSubview:occupationBtn];
     
     // 输入框底线
@@ -362,6 +402,224 @@
     scrollView.contentSize = CGSizeMake(ScreenWidth, CGRectGetMaxY(centerView.frame)+ScreenWidth*40/375);
 }
 
+#pragma mark --UIPickerViewDataSource
+
+// returns the number of 'columns' to display.
+
+//返回列数
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 2;
+}
+
+// returns the # of rows in each component..
+
+//返回行数
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    if (pickerViewType == enumtPickerViewType_Area) {
+        if (component == 0) {
+            return [provinecesArray count];
+        }else
+        {
+            NSInteger firstRow= [pickerView selectedRowInComponent:0];
+            NSDictionary *dic = [provinecesArray objectAtIndex:firstRow];
+            NSArray *cities = [dic objectForKey:@"cities"];
+            
+            return  [cities count];
+        }
+    } else {
+        if (component == 0) {
+            return [jobsArray count];
+        }else
+        {
+            NSInteger firstRow= [pickerView selectedRowInComponent:0];
+            NSDictionary *dic = [jobsArray objectAtIndex:firstRow];
+            NSArray *jobs = [dic objectForKey:@"job"];
+            
+            return  [jobs count];
+        }
+    }
+}
+
+#pragma mark --UIPickerViewDelegate
+
+//返回列的宽度
+- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component;
+{
+    if (component == 0) {
+        return ScreenWidth/2;
+    }else
+    {
+        return ScreenWidth/2;
+    }
+}
+//返回行的高度
+- (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
+{
+    return 50;
+}
+
+//返回列行的内容
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    if (pickerViewType == enumtPickerViewType_Area) {
+        if (component == 0) {
+            NSDictionary *dic = [provinecesArray objectAtIndex:row];
+            return  [dic objectForKey:@"ProvinceName"];
+        }else
+        {
+            NSInteger firstRow= [pickerView selectedRowInComponent:0];
+            NSDictionary *dic = [provinecesArray objectAtIndex:firstRow];
+            NSArray *cities = [dic objectForKey:@"cities"];
+            NSDictionary *cityDic = [cities objectAtIndex:row];
+            NSString *cityName = [cityDic objectForKey:@"CityName"];
+            
+            return cityName;
+        }
+    } else {
+        if (component == 0) {
+            NSDictionary *dic = [jobsArray objectAtIndex:row];
+            return  [dic objectForKey:@"Industry"];
+        }else
+        {
+            NSInteger firstRow= [pickerView selectedRowInComponent:0];
+            NSDictionary *dic = [jobsArray objectAtIndex:firstRow];
+            NSArray *jobs = [dic objectForKey:@"job"];
+            NSString *jobName = [jobs objectAtIndex:row];
+            
+            return jobName;
+        }
+    }
+    
+}
+
+//选择事件
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    if (component == 0) {
+        [pickerView reloadComponent:1];
+        [pickerView selectRow:0 inComponent:1 animated:YES];
+        //        _shengRow = row;
+    }//else {
+    // _cityRow = row;
+    //}
+}
+
+#pragma mark 选择地区
+- (void)areaPickerView:(UIButton *)button {
+    pickerViewType = enumtPickerViewType_Area; // 地区选择器
+         
+    pickViewBackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)]; // 先初始化
+    pickViewBackView.backgroundColor = [UIColor clearColor];
+    [scrollView addSubview:pickViewBackView];
+         
+    UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, ScreenHeight-216-44-64, ScreenWidth, 44)];
+    toolBar.tag = 103;
+    toolBar.barStyle = UIBarStyleDefault;
+    [toolBar setBackgroundColor:[UIColor blueColor]];
+         
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(leftBtnAction)];
+         
+    UIBarButtonItem *centerBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+         
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithTitle:@"确定" style:UIBarButtonItemStylePlain target:self action:@selector(rightBtnAction)];
+         
+    NSArray *items = @[leftBtn, centerBtn, rightBtn];
+    [toolBar setItems:items animated:YES];
+    [pickViewBackView addSubview:toolBar];
+         
+    areaPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, ScreenHeight-216-64, ScreenWidth, 216)];
+    areaPicker.backgroundColor = toolBarColor;
+    areaPicker.dataSource = self;
+    areaPicker.delegate = self;
+    [pickViewBackView addSubview:areaPicker];
+}
+
+#pragma mark 选择职业
+- (void)jobPickerView:(UIButton *)button {
+    pickerViewType = enumtPickerViewType_Job; // 职业选择器
+    
+    pickViewBackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)]; // 先初始化
+    pickViewBackView.backgroundColor = [UIColor clearColor];
+    [scrollView addSubview:pickViewBackView];
+    
+    UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, ScreenHeight-216-44-64, ScreenWidth, 44)];
+    toolBar.tag = 103;
+    toolBar.barStyle = UIBarStyleDefault;
+    [toolBar setBackgroundColor:[UIColor blueColor]];
+    
+    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(leftBtnAction)];
+    
+    UIBarButtonItem *centerBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    
+    UIBarButtonItem *rightBtn = [[UIBarButtonItem alloc] initWithTitle:@"确定" style:UIBarButtonItemStylePlain target:self action:@selector(rightBtnAction)];
+    
+    NSArray *items = @[leftBtn, centerBtn, rightBtn];
+    [toolBar setItems:items animated:YES];
+    [pickViewBackView addSubview:toolBar];
+    
+    jobPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, ScreenHeight-216-64, ScreenWidth, 216)];
+    jobPicker.backgroundColor = toolBarColor;
+    jobPicker.dataSource = self;
+    jobPicker.delegate = self;
+    [pickViewBackView addSubview:jobPicker];
+}
+
+#pragma mark -ToolBarButtonAction
+
+- (void)leftBtnAction
+{
+    if (pickerViewType == enumtPickerViewType_Area) { // 地区选择器
+        [pickViewBackView removeFromSuperview];
+        areaPicker = nil;
+        pickViewBackView = nil;
+    } else if (pickerViewType == enumtPickerViewType_Job) { // 职业选择器
+        [pickViewBackView removeFromSuperview];
+        jobPicker = nil;
+        pickViewBackView = nil;
+    }
+}
+
+- (void)rightBtnAction
+{
+    if (pickerViewType == enumtPickerViewType_Area) { // 地区选择器
+        
+        NSInteger firstRow = [areaPicker selectedRowInComponent:0];
+        NSDictionary *dic = [provinecesArray objectAtIndex:firstRow];
+        NSString *content1 = [dic objectForKey:@"ProvinceName"];
+        
+        NSArray *citiesArray = [dic objectForKey:@"cities"];
+        NSInteger secondRow = [areaPicker selectedRowInComponent:1];
+        NSDictionary *cityDic = [citiesArray objectAtIndex:secondRow];
+        NSString *content2 = cityDic[@"CityName"];
+        
+        NSString *content = [NSString stringWithFormat:@"中国-%@-%@", content1, content2];
+        [areaBtn setTitle:content forState:UIControlStateNormal];
+        
+        [pickViewBackView removeFromSuperview];
+        areaPicker = nil;
+        pickViewBackView = nil;
+    } else if (pickerViewType == enumtPickerViewType_Job) { // 职业选择器
+        
+        NSInteger firstRow = [jobPicker selectedRowInComponent:0];
+        NSDictionary *dic = [jobsArray objectAtIndex:firstRow];
+        NSString *content1 = [dic objectForKey:@"Industry"];
+        
+        NSArray *citiesArray = [dic objectForKey:@"job"];
+        NSInteger secondRow = [jobPicker selectedRowInComponent:1];
+        NSString *content2 = [citiesArray objectAtIndex:secondRow];
+        
+        NSString *content = [NSString stringWithFormat:@"%@-%@", content1, content2];
+        [occupationBtn setTitle:content forState:UIControlStateNormal];
+        
+        [pickViewBackView removeFromSuperview];
+        jobPicker = nil;
+        pickViewBackView = nil;
+    }
+    
+}
+
 #pragma mark 修改个人资料
 - (void)editPersonalAction:(UIButton *)button {
     if (edit) {
@@ -374,7 +632,13 @@
     
     maskView.hidden = NO;
     headLab.hidden = NO;
-    headImgView.userInteractionEnabled = YES;
+    
+    if ([myProfileModel.recommendMan isEqualToString:@""]) {
+        addBtn.userInteractionEnabled = YES;
+    } else {
+        addBtn.userInteractionEnabled = NO;
+    }
+    occupationBtn.userInteractionEnabled = YES;
     
     bottomLine1.hidden = NO;
     bottomLine2.hidden = NO;
@@ -392,6 +656,15 @@
     saveBtn.hidden = NO;
 }
 
+#pragma mark 添加推荐人
+- (void)recommendAction:(UIButton *)button {
+    addBtn.hidden = YES;
+    recommendTextF.hidden = NO;
+    bottomLine.hidden = NO;
+    
+    [recommendTextF becomeFirstResponder];
+}
+
 #pragma mark 取消
 - (void)cancelAction:(UIButton *)button {
     edit = NO;
@@ -401,7 +674,13 @@
     
     maskView.hidden = YES;
     headLab.hidden = YES;
-    headImgView.userInteractionEnabled = NO;
+    
+    addBtn.hidden = NO;
+    addBtn.userInteractionEnabled = NO;
+    recommendTextF.hidden = YES;
+    bottomLine.hidden = YES;
+    
+    occupationBtn.userInteractionEnabled = NO;
     
     bottomLine1.hidden = YES;
     bottomLine2.hidden = YES;
@@ -417,6 +696,12 @@
     centerView.hidden = YES;
     cancelBtn.hidden = YES;
     saveBtn.hidden = YES;
+    
+    recommendTextF.text = @"";
+    areaBtn.titleLabel.text = myProfileModel.province;
+    occupationBtn.titleLabel.text = myProfileModel.job;
+    mailboxField.text = myProfileModel.email;
+    signatureField.text = myProfileModel.signature;
 }
 
 #pragma mark 保存
@@ -428,7 +713,13 @@
     
     maskView.hidden = YES;
     headLab.hidden = YES;
-    headImgView.userInteractionEnabled = NO;
+    
+    addBtn.hidden = NO;
+    addBtn.userInteractionEnabled = NO;
+    recommendTextF.hidden = YES;
+    bottomLine.hidden = YES;
+    
+    occupationBtn.userInteractionEnabled = NO;
     
     bottomLine1.hidden = YES;
     bottomLine2.hidden = YES;
@@ -444,6 +735,8 @@
     centerView.hidden = YES;
     cancelBtn.hidden = YES;
     saveBtn.hidden = YES;
+    
+    [self editMyProfile]; // 修改个人资料
 }
 
 #pragma mark 请求个人资料
@@ -509,6 +802,16 @@
                  phoneLab.text = @"手机绑定";
              }
              
+             // 推荐人
+             
+             if ([myProfileModel.recommendMan isEqualToString:@""]) {
+                 [addBtn setTitle:@"添加" forState:UIControlStateNormal];
+                 [addBtn setTitleColor:darkRedColor forState:UIControlStateNormal];
+             } else {
+                 [addBtn setTitle:myProfileModel.recommendMan forState:UIControlStateNormal];
+                 [addBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                 
+             }
              
              // 昵称
              nickNameLab.text = myProfileModel.nickName;
@@ -555,19 +858,150 @@
      }] ;
 }
 
+#pragma mark 修改个人资料
+- (void)editMyProfile {
+    
+    if ([addBtn.titleLabel.text isEqualToString:myProfileModel.recommendMan] && [areaBtn.titleLabel.text isEqualToString:myProfileModel.province] && [occupationBtn.titleLabel.text isEqualToString:myProfileModel
+        .job] && [mailboxField.text isEqualToString:myProfileModel.email] && [signatureField.text isEqualToString:myProfileModel.signature]) {
+        return;
+    }
+    
+    __weak typeof(self)wSelf = self ;
+    
+    NZWebHandler *handler = [[NZWebHandler alloc] init] ;
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    hud.labelText = @"请稍候..." ;
+    
+    NZUser *user = [NZUserManager sharedObject].user ;
+    
+    NSString *userId = [NSString stringWithFormat:@"%@",user.userId] ;
+    
+    NSDictionary *parameters;
+    if ([recommendTextF.text isEqualToString:@""]) {
+        parameters = @{
+                       @"userId":userId,
+                       @"hometown":areaBtn.titleLabel.text,
+                       @"job":occupationBtn.titleLabel.text,
+                       @"email":mailboxField.text,
+                       @"signature":signatureField.text
+                       } ;
+    } else {
+        parameters = @{
+                       @"userId":userId,
+                       @"recommendMan":recommendTextF.text,
+                       @"hometown":areaBtn.titleLabel.text,
+                       @"job":occupationBtn.titleLabel.text,
+                       @"email":mailboxField.text,
+                       @"signature":signatureField.text
+                       } ;
+    }
+    
+    [handler postURLStr:webMyProfileEdit postDic:parameters
+                  block:^(NSDictionary *retInfo, NSError *error)
+     {
+         [MBProgressHUD hideAllHUDsForView:wSelf.view animated:YES] ;
+         
+         if( error )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             recommendTextF.text = @"";
+             areaBtn.titleLabel.text = myProfileModel.province;
+             occupationBtn.titleLabel.text = myProfileModel.job;
+             mailboxField.text = myProfileModel.email;
+             signatureField.text = myProfileModel.signature;
+             return ;
+         }
+         if( retInfo == nil )
+         {
+             [wSelf.view makeToast:@"网络错误"];
+             recommendTextF.text = @"";
+             areaBtn.titleLabel.text = myProfileModel.province;
+             occupationBtn.titleLabel.text = myProfileModel.job;
+             mailboxField.text = myProfileModel.email;
+             signatureField.text = myProfileModel.signature;
+             return ;
+         }
+         
+         BOOL state = [[retInfo objectForKey:@"state"] boolValue] ;
+         
+         if( state )
+         {
+             [self requestMyProfile];
+         }
+         else
+         {
+             [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
+             recommendTextF.text = @"";
+             areaBtn.titleLabel.text = myProfileModel.province;
+             occupationBtn.titleLabel.text = myProfileModel.job;
+             mailboxField.text = myProfileModel.email;
+             signatureField.text = myProfileModel.signature;
+         }
+     }] ;
+}
+
 #pragma mark 下面全是修改头像的，不是我写的，先暂时不看，能用就好
 - (void)editPortrait {
-    UIActionSheet *choiceSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                             delegate:self
-                                                    cancelButtonTitle:@"取消"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"拍照", @"从相册中选取", nil];
-    [choiceSheet showInView:self.view];
+    if (edit) {
+        UIActionSheet *choiceSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                  delegate:self
+                                         cancelButtonTitle:@"取消"
+                                    destructiveButtonTitle:nil
+                                         otherButtonTitles:@"拍照", @"从相册中选取", nil];
+        [choiceSheet showInView:self.view];
+    } else {
+        SDPhotoBrowser *browser = [[SDPhotoBrowser alloc] init];
+        browser.sourceImagesContainerView = headView; // 原图的父控件
+        browser.imageCount = 1; // 图片总数
+        browser.currentImageIndex = 0;
+        browser.delegate = self;
+        [browser show];
+    }
 }
 
 #pragma mark VPImageCropperDelegate
 - (void)imageCropper:(NJImageCropperViewController *)cropperViewController didFinished:(UIImage *)editedImage {
     headImgView.image = editedImage;
+    
+    NZUser *user = [NZUserManager sharedObject].user;
+    
+    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSTimeInterval a=[dat timeIntervalSince1970]*1000;
+    NSString *timeString = [NSString stringWithFormat:@"%f.png", a];
+    
+    // 压缩图片
+    UIImage *scaleImage = [NZGlobal scaleFromImage:editedImage toSize:CGSizeMake(150.0f, 150.0f)];
+    NSData *imageData = UIImageJPEGRepresentation(scaleImage, 1.0);
+    
+    FileDetail *file = [FileDetail fileWithName:timeString data:imageData];
+    
+    NSDictionary *params = @{
+                             @"userId":user.userId,
+                             @"headImg":file
+                             } ;
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *result = [NZWebHandler upload:[NSString stringWithFormat:@"http://10.0.0.177:8000/app/client/HeadImgEdit"] widthParams:params];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (nil == result) {
+                [self.view makeToast:@"头像上传失败"];
+                return;
+            } else if ([result[@"isSuccess"] boolValue]) {
+                [self.view makeToast:@"头像上传成功"];
+                return;
+            } else {
+                [self.view makeToast:result[@"msg"]];
+                return;
+            }
+            
+        });
+        
+    });
+    
     [cropperViewController dismissViewControllerAnimated:YES completion:^{
         // TO DO
     }];
@@ -578,43 +1012,82 @@
     }];
 }
 
+#pragma mark - photobrowser代理方法
+
+// 返回临时占位图片（即原来的小图）
+- (UIImage *)photoBrowser:(SDPhotoBrowser *)browser placeholderImageForIndex:(NSInteger)index
+{
+    return headImgView.image;
+}
+
+
+// 返回高质量图片的url
+- (NSURL *)photoBrowser:(SDPhotoBrowser *)browser highQualityImageURLForIndex:(NSInteger)index
+{
+    return [NSURL URLWithString:myProfileModel.headImg];
+}
+
+
 #pragma mark UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 0) {
-        // 拍照
-        if ([self isCameraAvailable] && [self doesCameraSupportTakingPhotos]) {
-            UIImagePickerController *controller = [[UIImagePickerController alloc] init];
-            controller.sourceType = UIImagePickerControllerSourceTypeCamera;
-            if ([self isFrontCameraAvailable]) {
-                controller.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+//    if ([actionSheet isEqual:choiceSheet]) {
+//        if (buttonIndex == 0) {
+//            
+//            SDPhotoBrowser *browser = [[SDPhotoBrowser alloc] init];
+//            browser.sourceImagesContainerView = headView; // 原图的父控件
+//            browser.imageCount = 1; // 图片总数
+//            browser.currentImageIndex = 0;
+//            browser.delegate = self;
+//            [browser show];
+//            
+//        } else if (buttonIndex == 1) {
+//            [choiceSheet removeFromSuperview];
+//            choiceSheet = nil;
+//            
+//            editStyleSheet = [[UIActionSheet alloc] initWithTitle:nil
+//                                                         delegate:self
+//                                                cancelButtonTitle:@"取消"
+//                                           destructiveButtonTitle:nil
+//                                                otherButtonTitles:@"拍照", @"从相册中选取", nil];
+//            [editStyleSheet showInView:self.view];
+//        }
+//    } else {
+        if (buttonIndex == 0) {
+            // 拍照
+            if ([self isCameraAvailable] && [self doesCameraSupportTakingPhotos]) {
+                UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+                controller.sourceType = UIImagePickerControllerSourceTypeCamera;
+                if ([self isFrontCameraAvailable]) {
+                    controller.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+                }
+                NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
+                [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
+                controller.mediaTypes = mediaTypes;
+                controller.delegate = self;
+                [self presentViewController:controller
+                                   animated:YES
+                                 completion:^(void){
+                                     NSLog(@"Picker View Controller is presented");
+                                 }];
             }
-            NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
-            [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
-            controller.mediaTypes = mediaTypes;
-            controller.delegate = self;
-            [self presentViewController:controller
-                               animated:YES
-                             completion:^(void){
-                                 NSLog(@"Picker View Controller is presented");
-                             }];
+            
+        } else if (buttonIndex == 1) {
+            // 从相册中选取
+            if ([self isPhotoLibraryAvailable]) {
+                UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+                controller.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
+                [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
+                controller.mediaTypes = mediaTypes;
+                controller.delegate = self;
+                [self presentViewController:controller
+                                   animated:YES
+                                 completion:^(void){
+                                     NSLog(@"Picker View Controller is presented");
+                                 }];
+            }
         }
-        
-    } else if (buttonIndex == 1) {
-        // 从相册中选取
-        if ([self isPhotoLibraryAvailable]) {
-            UIImagePickerController *controller = [[UIImagePickerController alloc] init];
-            controller.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-            NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
-            [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
-            controller.mediaTypes = mediaTypes;
-            controller.delegate = self;
-            [self presentViewController:controller
-                               animated:YES
-                             completion:^(void){
-                                 NSLog(@"Picker View Controller is presented");
-                             }];
-        }
-    }
+//    }
 }
 
 #pragma mark - UIImagePickerControllerDelegate

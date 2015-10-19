@@ -13,6 +13,7 @@
 }
 
 @property (strong, nonatomic) IBOutlet UIView *imageBackground;
+@property (strong, nonatomic) IBOutlet UIImageView *imgView;
 
 - (IBAction)editAction:(UIButton *)sender;
 - (IBAction)selectAction:(UIButton *)sender;
@@ -24,7 +25,7 @@
 @implementation NZShopBagViewCell
 
 - (void)awakeFromNib {
-    // Initialization code
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -34,34 +35,30 @@
 }
 
 - (void)layoutSubviews {
+    
     self.imageBackground.layer.cornerRadius = self.imageBackground.frame.size.width / 2;
     self.imageBackground.layer.masksToBounds = YES;
     self.imageBackground.layer.borderWidth = 0.5f;
     self.imageBackground.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    
+    self.imgView.layer.cornerRadius = self.imgView.frame.size.width / 2;
+    self.imgView.layer.masksToBounds = YES;
     
     self.editBtn.layer.cornerRadius = 2.f;
     self.editBtn.layer.masksToBounds = YES;
     self.editBtn.layer.borderColor = [UIColor redColor].CGColor;
     self.editBtn.layer.borderWidth = 0.5f;
     
-    
 }
 
-- (void)setCommodityModel:(NZCommodityModel *)commodityModel {
-    self.index = commodityModel.index;
+- (void)setShopBagGoodModel:(ShopBagGoodModel *)shopBagGoodModel {
+    _shopBagGoodModel = shopBagGoodModel;
     
-    if (commodityModel.selectState) {
-        self.selectImg.image = [UIImage imageNamed:@"圆-已选"];
-    } else {
-        self.selectImg.image = [UIImage imageNamed:@"圆-未选"];
-    }
-    self.selectState = commodityModel.selectState;
+    self.numLab.text = [NSString stringWithFormat:@"x %d",shopBagGoodModel.count];
+    self.number = shopBagGoodModel.count;
     
-    self.numLab.text = [NSString stringWithFormat:@"x %d",commodityModel.commodityNum];
-    self.number = commodityModel.commodityNum;
-    
-    self.price = [commodityModel.commodityPrice doubleValue];
-    self.totalPrice = self.price * self.number;
+    self.price = shopBagGoodModel.totalPrice/shopBagGoodModel.count;
+    self.totalPrice = shopBagGoodModel.totalPrice;
     self.priceLab.text = [NSString stringWithFormat:@"￥%.2f",self.totalPrice];
 }
 

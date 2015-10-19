@@ -55,12 +55,18 @@ extern NSString *webDeleteAddress; // 删除收货地址
 extern NSString *webTakeFirstPage; // 拿着一级页面接口
 extern NSString *webSettingPage; // 设置页面接口
 extern NSString *webMyProfile; // 个人资料接口
+extern NSString *webMyProfileEdit; // 修改个人资料接口
 extern NSString *webBankCardList; // 银行卡接口
 extern NSString *webDeleteBankCard; // 删除银行卡接口
 
 extern NSString *webMyWalletDetail; // 我的钱包接口
 extern NSString *webMyCouponsList; // 我的优享券接口
 extern NSString *webBillRecord; // 账单纪录接口
+
+extern NSString *webShoppingBagsList; // 购物袋列表接口
+extern NSString *webShoppingBagsGoodNumberEdit; // 购物袋编辑数量接口
+extern NSString *webShoppingBagsGoodDelete; // 购物袋删除接口
+extern NSString *webShoppingBagsSpecs; // 商品参数编辑接口
 
 extern NSString *webServiceHelp; // 客服帮助接口
 extern NSString *webServiceMessage; // 客服留言接口

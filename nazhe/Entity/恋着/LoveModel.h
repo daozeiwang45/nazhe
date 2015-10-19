@@ -83,6 +83,10 @@
 @interface NewGoodsModel : NSObject
 
 /**
+ *  新品商品ID
+ */
+@property (nonatomic, assign) int goodID;
+/**
  *  新品商品图片
  */
 @property (nonatomic, copy) NSString *img;

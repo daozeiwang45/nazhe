@@ -218,7 +218,11 @@
     
     /***************************     中间图     **************************/
     centerImageView = [[UIImageView alloc] initWithFrame:CGRectMake((imgWidth + imgMargin) * 2, 0, imgWidth, ScreenWidth*315/375)];
-    
+//    // 创建一个手势识别器
+//    UITapGestureRecognizer *goodDetailTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goodDetailAction)];
+//    [goodDetailTap setNumberOfTapsRequired:1];
+//    [goodDetailTap setNumberOfTouchesRequired:1];
+//    [centerImageView addGestureRecognizer:goodDetailTap];
     [contentView.npScrollView addSubview:centerImageView];
     
     UIImageView *gradientMask3 = [[UIImageView alloc] initWithFrame:CGRectMake((imgWidth + imgMargin) * 2, gradientOriginY, imgWidth, imgWidth / 2)];
@@ -243,6 +247,11 @@
     centerPriceLab.textAlignment = NSTextAlignmentCenter ;
     [contentView.npScrollView addSubview:centerPriceLab];
     
+    // 新品汇点击进入商品详情按钮
+    UIButton *npDetailBtn = [[UIButton alloc] initWithFrame:centerImageView.frame];
+    npDetailBtn.backgroundColor = [UIColor clearColor];
+    [npDetailBtn addTarget:self action:@selector(goodDetailAction) forControlEvents:UIControlEventTouchUpInside];
+    [contentView.npScrollView addSubview:npDetailBtn];
     
     /***************************     右一图     **************************/
     rightOneImageView = [[UIImageView alloc] initWithFrame:CGRectMake((imgWidth + imgMargin) * 3, 0, imgWidth, ScreenWidth*315/375)];
@@ -337,13 +346,13 @@
 }
 
 - (void)registJump:(UIButton *)button {
-//    NZRegistFirstViewController *registVCTR = [[NZRegistFirstViewController alloc] init];
-//    registVCTR.hidesBottomBarWhenPushed = YES;
-//    [self.navigationController pushViewController:registVCTR animated:YES];
-    NZActivityViewController *activityVCTR = [[NZActivityViewController alloc] init];
-    activityVCTR.activityID = 1;
-    activityVCTR.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:activityVCTR animated:YES];
+    NZRegistFirstViewController *registVCTR = [[NZRegistFirstViewController alloc] init];
+    registVCTR.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:registVCTR animated:YES];
+//    NZActivityViewController *activityVCTR = [[NZActivityViewController alloc] init];
+//    activityVCTR.activityID = 1;
+//    activityVCTR.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:activityVCTR animated:YES];
 }
 
 #pragma mark 幸运星辰界面布局
@@ -453,6 +462,11 @@
         nextIndex = currentIndex + 1;
         next2Index = currentIndex + 2;
     }
+}
+
+#pragma mark 新品汇点击进入商品详情
+- (void)goodDetailAction {
+    
 }
 
 #pragma mark UIScrollViewDelegate
@@ -595,6 +609,7 @@
              for (int i=0; i<goodsArray.count; i++) {
                  NSDictionary *goddDic = goodsArray[i];
                  NewGoodsModel *goodModel = [NewGoodsModel objectWithKeyValues:goddDic];
+                 goodModel.goodID = [goddDic[@"id"] intValue];
                  [goodsList addObject:goodModel];
              }
              loveModel.nGoodsList = goodsList;

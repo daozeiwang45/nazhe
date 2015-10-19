@@ -57,10 +57,12 @@
     }
     BankCardInfoModel *bankCardInfo = bankCardModel.list[indexPath.row];
     
+    [cell.bankImgV sd_setImageWithURL:[NSURL URLWithString:[NZGlobal GetImgBaseURL:bankCardInfo.bankIcon]] placeholderImage:defaultImage];
+    
     cell.bankNameLab.text = bankCardInfo.bankName;
     
-    NSString *numberStr = [bankCardInfo.cardNumber substringFromIndex:14];
-    cell.numberLab.text = [NSString stringWithFormat:@"尾号%@",numberStr];
+//    NSString *numberStr = [bankCardInfo.cardNumber substringFromIndex:14];
+    cell.numberLab.text = [NSString stringWithFormat:@"尾号%@", bankCardInfo.cardNumber];
     
     cell.subLab.text = bankCardInfo.bankBranch;
     
@@ -183,8 +185,9 @@
     
     int cardID = [objc_getAssociatedObject(button, "cardID") intValue];
     
-    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil message:@"确认要删除该银行卡吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     self.deleteCardID = cardID;
+    UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:nil message:@"确认要删除该银行卡吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+    
     [alertview show];
     
 }
@@ -207,7 +210,6 @@
                                  @"userId":userId,
                                  @"id":[NSNumber numberWithInt:self.deleteCardID]
                                  } ;
-    NSLog(@"%d",self.deleteCardID);
     
     [handler postURLStr:webDeleteAddress postDic:parameters
                   block:^(NSDictionary *retInfo, NSError *error)
