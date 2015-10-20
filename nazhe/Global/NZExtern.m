@@ -66,6 +66,7 @@ NSString *webShoppingBagsList = @"orders/ShoppingBagsList"; // 购物袋列表�
 NSString *webShoppingBagsGoodNumberEdit = @"orders/ShoppingBagsEdit"; // 购物袋编辑数量接口
 NSString *webShoppingBagsGoodDelete = @"orders/ShoppingBagsDel"; // 购物袋删除接口
 NSString *webShoppingBagsSpecs = @"orders/ShoppingBagsSpecs"; // 商品参数编辑接口
+NSString *webGetDefaultAddress = @"Goods/BuyNow"; // 立即购买接口
 
 NSString *webServiceHelp = @"client/HelpInfoList"; // 客服帮助接口
 NSString *webServiceMessage = @"client/Feedback"; // 客服留言接口
@@ -113,6 +114,12 @@ NSString *NZMajorSuitCellIdentify = @"NZMajorSuitCellIdentify";
 // 购物袋cell
 NSString *NZShopBagCellIdentify = @"NZShopBagCellIdentify";
 NSString *NZShopBagExpendCellIdentify = @"NZShopBagExpendCellIdentify";
+
+// 购物袋订单确认cell
+NSString *NZSettleCellIdentify = @"NZSettleCellIdentify";
+// 更换收货地址cell
+NSString *NZChangeAddressCellIdentify = @"NZChangeAddressCellIdentify";
+
 // 收货地址cell
 NSString *NZDeliveryAddressViewCellIdentify = @"NZDeliveryAddressViewCellIdentify";
 // 账单纪录cell

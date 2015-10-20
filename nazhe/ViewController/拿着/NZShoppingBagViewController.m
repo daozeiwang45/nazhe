@@ -13,11 +13,22 @@
 #import "ShopBagModel.h"
 #import "NZShopBagViewModel.h"
 #import "GoodSpecificationsModel.h"
+#import "NZConfirmOrderViewController.h"
 
 #define classFont [UIFont systemFontOfSize:15.f]
 #define specFont [UIFont systemFontOfSize:13.f]
+#define weightTag 100
+#define sizeTag 200
+#define gradeTag 300
+#define colorTag 400
+#define hardnessTag 500
+#define fillInTag 600
+#define accessoriesTag 700
+#define packTag 800
 
 @interface NZShoppingBagViewController ()<UITableViewDataSource, UITableViewDelegate, NZShopBagDelegate, NZShopBagExpendDelegate> {
+    
+    IBOutlet NSLayoutConstraint *bottomHeight; // 底部栏的高度的约束
     
     int currentSection; // 当前编辑cell的section
     int currentRow; // 当前编辑cell的row
@@ -26,6 +37,7 @@
     
     NSMutableArray *shopBagVMArray; // 购物袋列表视图模型数组
     ShopBagModel *shopBagModel; // 购物袋列表数据存储模型
+//    NSMutableArray *settleGoodsVMArray; // 结算商品列表视图模型数组（要传给订单确认界面）
     
     GoodSpecificationsModel *goodSpecModel; // 商品参数模型
     
@@ -34,14 +46,27 @@
     double deletePrice; // 要删除的商品的单价
     int deleteNumber; // 要删除的商品的数量
     BOOL deleteState; // 删除时的选中状态
+    
+    /************** 编辑商品规格的选中状态 ****************/
+    int selectWeight;
+    int selectSize;
+    int selectGrade;
+    int selectColor;
+    int selectHardness;
+    int selectFillIn;
+    int selectAccessories;
+    int selectPack;
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) IBOutlet UIView *settelView;
 @property (strong, nonatomic) IBOutlet UIImageView *selectImgV;
 @property (strong, nonatomic) IBOutlet UILabel *totalPriceLab;
+@property (strong, nonatomic) IBOutlet UILabel *expressPriceLab;
+
 @property (nonatomic, assign) double totalPrice;
 @property (nonatomic, assign) double editPrice;
+@property (nonatomic, assign) double expressPrice;
 @property (strong, nonatomic) IBOutlet UIButton *settleBtn;
 @property (assign, nonatomic) int settleNumber;
 
@@ -68,6 +93,7 @@
         
         _totalPrice = 0.0;
         _editPrice = 0.0;
+        _expressPrice = 0.0;
         
         _settleNumber = 0;
         
@@ -89,6 +115,8 @@
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    bottomHeight.constant = ScreenWidth*45/375; // 底部栏的动态45高
     
 //    // 判断有几个选择了，算进总价和结算个数中（实际不需要，都为未选）
 //    for (int i = 0; i < infoArr.count; i++) {
@@ -125,12 +153,24 @@
     _specificationsScrollV.backgroundColor = [UIColor whiteColor];
     [_specificationsView addSubview:_specificationsScrollV];
     
-    UIButton *commitSpeBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*90/375, ScreenWidth*321/375, ScreenWidth*125/375, ScreenWidth*30/375)];
+    UIButton *cancelSpeBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*38/375, ScreenWidth*331/375, ScreenWidth*100/375, ScreenWidth*27/375)];
+    cancelSpeBtn.backgroundColor = [UIColor whiteColor];
+    [cancelSpeBtn setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelSpeBtn setTitleColor:darkRedColor forState:UIControlStateNormal];
+    cancelSpeBtn.titleLabel.font = [UIFont systemFontOfSize:15.f];
+    cancelSpeBtn.layer.cornerRadius = 1.f;
+    cancelSpeBtn.layer.masksToBounds = YES;
+    cancelSpeBtn.layer.borderColor = darkRedColor.CGColor;
+    cancelSpeBtn.layer.borderWidth = 0.5f;
+    [cancelSpeBtn addTarget:self action:@selector(commitSpeAction:) forControlEvents:UIControlEventTouchUpInside];
+    [_specificationsView addSubview:cancelSpeBtn];
+    
+    UIButton *commitSpeBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth*168/375, ScreenWidth*331/375, ScreenWidth*100/375, ScreenWidth*27/375)];
     commitSpeBtn.backgroundColor = darkRedColor;
     [commitSpeBtn setTitle:@"确认" forState:UIControlStateNormal];
     [commitSpeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     commitSpeBtn.titleLabel.font = [UIFont systemFontOfSize:15.f];
-    commitSpeBtn.layer.cornerRadius = 2.f;
+    commitSpeBtn.layer.cornerRadius = 1.f;
     commitSpeBtn.layer.masksToBounds = YES;
     [commitSpeBtn addTarget:self action:@selector(commitSpeAction:) forControlEvents:UIControlEventTouchUpInside];
     [_specificationsView addSubview:commitSpeBtn];
@@ -219,7 +259,7 @@
     ShopBagBrandModel *shopBrandModel = shopBagModel.list[section];
     brandNameLab.text = shopBrandModel.shopName;
     brandNameLab.textColor = [UIColor darkGrayColor];
-    brandNameLab.font = [UIFont systemFontOfSize:15.f];
+    brandNameLab.font = [UIFont systemFontOfSize:17.f];
     [whiteView addSubview:brandNameLab];
     
     UIView *line2 = [[UIView alloc] initWithFrame:CGRectMake(0, 39.5, ScreenWidth, 0.5)];
@@ -293,7 +333,7 @@
     
 }
 
-- (void)selectClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number {
+- (void)selectClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number andExpressPrice:(float)expressPrice {
     // 不论是选择还是取消选择，都将结果纪录下来
     NSArray *shopBagVMAry = shopBagVMArray[section];
     NZShopBagViewModel *shopBagVM = shopBagVMAry[row];
@@ -303,6 +343,7 @@
     if (selectState) { // 如果是选择
         self.totalPrice += price * number; // 总价要加
         self.settleNumber ++; // 结算个数要加
+        self.expressPrice += expressPrice; // 运费要加
         [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
         
         // 判断有没有全选，如有，全选的图标要换已选
@@ -329,6 +370,7 @@
     } else { // 如果是取消选择
         self.totalPrice -= price * number; // 总价要减
         self.settleNumber --; // 结算个数要减
+        self.expressPrice -= expressPrice; // 运费要减
         [_settleBtn setTitle:[NSString stringWithFormat:@"结算(%d)",self.settleNumber] forState:UIControlStateNormal];
         
         _selectImgV.image = [UIImage imageNamed:@"圆-未选"];
@@ -339,6 +381,13 @@
     [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, 3)];
     [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
     _totalPriceLab.attributedText = str;
+    
+    if (self.expressPrice>0) {
+        NSString *expressPriceStr = [NSString stringWithFormat:@"运费：%.2f元",self.expressPrice];
+        _expressPriceLab.text = expressPriceStr;
+    } else {
+        _expressPriceLab.text = @"不含运费";
+    }
     
 }
 
@@ -406,7 +455,7 @@
              // 重量
              if (goodSpecModel.weightList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*8/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -415,7 +464,7 @@
                  
                  _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  _specClassLab.text = @"重量分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -426,26 +475,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.weightList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*8/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
                          if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*28/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*8/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*8/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectWeight = weightTag+i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:weightTag+i];
+                     [_specParamBtn addTarget:self action:@selector(weightAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -454,7 +512,7 @@
              if (goodSpecModel.sizeList.count != 0) {
                  
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -462,12 +520,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"规格分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -478,26 +536,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.sizeList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
-                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*28/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectSize = sizeTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:sizeTag+i];
+                     [_specParamBtn addTarget:self action:@selector(sizeAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -505,7 +572,7 @@
              // 等级
              if (goodSpecModel.gradeList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -513,12 +580,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"等级分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -529,26 +596,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.gradeList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
-                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*28/375)<contentSize.width) {
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectGrade = gradeTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:gradeTag+i];
+                     [_specParamBtn addTarget:self action:@selector(gradeAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -556,7 +632,7 @@
              // 颜色
              if (goodSpecModel.colorList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -564,12 +640,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"颜色分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -580,26 +656,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.colorList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
                          if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectColor = colorTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:colorTag+i];
+                     [_specParamBtn addTarget:self action:@selector(colorAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -607,7 +692,7 @@
              // 硬度分类
              if (goodSpecModel.hardnessList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -615,12 +700,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"硬度分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -631,26 +716,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.hardnessList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
                          if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectHardness = hardnessTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:hardnessTag+i];
+                     [_specParamBtn addTarget:self action:@selector(hardnessAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -658,7 +752,7 @@
              // 镶嵌
              if (goodSpecModel.fillInList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -666,12 +760,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"镶嵌分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -682,26 +776,35 @@
                      BagParametersModel *paramsModel = goodSpecModel.fillInList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
                          if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectFillIn = fillInTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:fillInTag+i];
+                     [_specParamBtn addTarget:self action:@selector(fillInAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
@@ -709,7 +812,7 @@
              // 配饰
              if (goodSpecModel.accessoriesList.count != 0) {
                  if (i != 0) {
-                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*5/375, ScreenWidth*306/375, 0.5)];
+                     _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
                      _bottomLine.backgroundColor = [UIColor grayColor];
                      [_specificationsScrollV addSubview:_bottomLine];
                  } else {
@@ -717,12 +820,12 @@
                  }
                  
                  if (_bottomLine) {
-                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*3/375, 200, ScreenWidth*20/375)];
+                     _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
                  } else {
                      _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
                  }
                  _specClassLab.text = @"配饰分类";
-                 _specClassLab.textColor = [UIColor darkGrayColor];
+                 _specClassLab.textColor = [UIColor blackColor];
                  _specClassLab.font = classFont;
                  [_specificationsScrollV addSubview:_specClassLab];
                  
@@ -733,31 +836,94 @@
                      BagParametersModel *paramsModel = goodSpecModel.accessoriesList[i];
                      CGSize contentSize = [paramsModel.name boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
                      if (i == 0) {
-                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                         _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                          
                      } else {
                          if ((ScreenWidth*306/375-CGRectGetMaxX(_specParamBtn.frame)-ScreenWidth*23/375)<contentSize.width) {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/375, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          } else {
-                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*3/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*30/375, limitSize.height)];
+                             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
                              
                          }
                      }
                      _specParamBtn.backgroundColor = BKColor;
                      [_specParamBtn setTitle:paramsModel.name forState:UIControlStateNormal];
                      if (paramsModel.count == 0) {
-                         [_specParamBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
                          _specParamBtn.userInteractionEnabled = NO;
                      } else {
-                         [_specParamBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+                         [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                     }
+                     if (paramsModel.isChose) {
+                         _specParamBtn.backgroundColor = darkRedColor;
+                         [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                         selectAccessories = accessoriesTag + i;
                      }
                      _specParamBtn.titleLabel.font = specFont;
+                     _specParamBtn.layer.cornerRadius = 1.f;
+                     _specParamBtn.layer.masksToBounds = YES;
+                     [_specParamBtn setTag:accessoriesTag+i];
+                     [_specParamBtn addTarget:self action:@selector(accessoriesAction:) forControlEvents:UIControlEventTouchUpInside];
                      [_specificationsScrollV addSubview:_specParamBtn];
                  }
              }
              
+             // 包装
+             _bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*10/375, ScreenWidth*306/375, 0.5)];
+             _bottomLine.backgroundColor = [UIColor grayColor];
+             [_specificationsScrollV addSubview:_bottomLine];
+             
+             if (_bottomLine) {
+                 _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, CGRectGetMaxY(_bottomLine.frame)+ScreenWidth*5/375, 200, ScreenWidth*20/375)];
+             } else {
+                 _specClassLab = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth*15/375, 0, 200, ScreenWidth*20/375)];
+             }
+             _specClassLab.text = @"包装";
+             _specClassLab.textColor = [UIColor blackColor];
+             _specClassLab.font = classFont;
+             [_specificationsScrollV addSubview:_specClassLab];
+             
+             NSDictionary *attribute = @{NSFontAttributeName:specFont};
+             CGSize limitSize = CGSizeMake(MAXFLOAT, ScreenWidth*18/375);
+             // 计算尺寸
+             CGSize contentSize = [@"四个字呢" boundingRectWithSize:limitSize options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
 
+             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(startX, CGRectGetMaxY(_specClassLab.frame)+ScreenWidth*5/375, contentSize.width+ScreenWidth*20/375, limitSize.height)];
+             [_specParamBtn setTitle:@"普通包装" forState:UIControlStateNormal];
+             if ([goodSpecModel.pack isEqualToString:@"普通包装"]) {
+                 _specParamBtn.backgroundColor = darkRedColor;
+                 [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                 selectPack = packTag + 0;
+             } else {
+                 _specParamBtn.backgroundColor = BKColor;
+                 [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+             }
+             _specParamBtn.titleLabel.font = specFont;
+             _specParamBtn.layer.cornerRadius = 1.f;
+             _specParamBtn.layer.masksToBounds = YES;
+             [_specParamBtn setTag:packTag+0];
+             [_specParamBtn addTarget:self action:@selector(packAction:) forControlEvents:UIControlEventTouchUpInside];
+             [_specificationsScrollV addSubview:_specParamBtn];
+             
+             _specParamBtn = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_specParamBtn.frame)+ScreenWidth*10/375, _specParamBtn.origin.y, contentSize.width+ScreenWidth*20/375, limitSize.height)];
+             [_specParamBtn setTitle:@"礼盒包装" forState:UIControlStateNormal];
+             if ([goodSpecModel.pack isEqualToString:@"礼盒包装"]) {
+                 _specParamBtn.backgroundColor = darkRedColor;
+                 [_specParamBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                 selectPack = packTag + 1;
+             } else {
+                 _specParamBtn.backgroundColor = BKColor;
+                 [_specParamBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+             }
+             _specParamBtn.titleLabel.font = specFont;
+             _specParamBtn.layer.cornerRadius = 1.f;
+             _specParamBtn.layer.masksToBounds = YES;
+             [_specParamBtn setTag:packTag+1];
+             [_specParamBtn addTarget:self action:@selector(packAction:) forControlEvents:UIControlEventTouchUpInside];
+             [_specificationsScrollV addSubview:_specParamBtn];
+             
+             _specificationsScrollV.contentOffset = CGPointMake(0, 0);
              _specificationsScrollV.contentSize = CGSizeMake(ScreenWidth*306/375, CGRectGetMaxY(_specParamBtn.frame)+ScreenWidth*3/37);
              
              [self.view bringSubviewToFront:_shadowView];
@@ -1025,6 +1191,86 @@
     
 }
 
+#pragma mark 商品规格点击更改事件
+- (void)weightAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectWeight];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectWeight = (int)button.tag;
+}
+
+- (void)sizeAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectSize];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectSize = (int)button.tag;
+}
+
+- (void)gradeAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectGrade];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectGrade = (int)button.tag;
+}
+
+- (void)colorAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectColor];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectColor = (int)button.tag;
+}
+
+- (void)hardnessAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectHardness];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectHardness = (int)button.tag;
+}
+
+- (void)fillInAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectFillIn];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectFillIn = (int)button.tag;
+}
+
+- (void)accessoriesAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectAccessories];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectAccessories = (int)button.tag;
+}
+- (void)packAction:(UIButton *)button {
+    UIButton *lastBtn = (UIButton *)[_specificationsScrollV viewWithTag:selectPack];
+    lastBtn.backgroundColor = BKColor;
+    [lastBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    button.backgroundColor = darkRedColor;
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    selectPack = (int)button.tag;
+}
+
 #pragma mark 按钮点击事件
 
 - (void)commitSpeAction:(UIButton *)button {
@@ -1067,12 +1313,15 @@
         }
         
         self.totalPrice = 0.0;
+        self.expressPrice = 0.0;
         
         NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"合计￥%.2f",self.totalPrice]];
         [str addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:NSMakeRange(0, 2)];
         [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, 3)];
         [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
         _totalPriceLab.attributedText = str;
+        
+        _expressPriceLab.text = @"不含运费";
     } else {
         int count = 0;
         for (int i = 0; i < shopBagVMArray.count; i++) {
@@ -1091,6 +1340,7 @@
                 NZShopBagViewModel *shopBagVM = shopBagVMAry[j];
                 if (!shopBagVM.shopBagGoodModel.selectState) {
                     self.totalPrice += shopBagVM.shopBagGoodModel.totalPrice;
+                    self.expressPrice += shopBagVM.shopBagGoodModel.expressPrice;
                 }
                 shopBagVM.shopBagGoodModel.selectState = YES;
             }
@@ -1101,6 +1351,9 @@
         [str addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(2, 3)];
         [str addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:13.f] range:NSMakeRange(0, 1)];
         _totalPriceLab.attributedText = str;
+        
+        NSString *expressPriceStr = [NSString stringWithFormat:@"运费：%.2f元",self.expressPrice];
+        _expressPriceLab.text = expressPriceStr;
     }
     
     [_tableView reloadData];
@@ -1108,7 +1361,32 @@
 }
 
 - (IBAction)settleAction:(UIButton *)sender {
-    
+    if (self.settleNumber == 0) {
+        [self.view makeToast:@"请先选择商品"];
+    } else {
+        ShopBagModel *settleBagModel = [[ShopBagModel alloc] init];
+        settleBagModel.list = [NSMutableArray array];
+        for (int i = 0; i < shopBagModel.list.count; i++) {
+            ShopBagBrandModel *settleBrandModel = [[ShopBagBrandModel alloc] init];
+            settleBrandModel.goodsList = [NSMutableArray array];
+            ShopBagBrandModel *brandModel = shopBagModel.list[i];
+            for (int j=0; j<brandModel.goodsList.count; j++) {
+                ShopBagGoodModel *goodModel = brandModel.goodsList[j];
+                if (goodModel.selectState) {
+                    [settleBrandModel.goodsList addObject:goodModel];
+                }
+            }
+            if (settleBrandModel.goodsList.count != 0) {
+                settleBrandModel.shopId = brandModel.shopId;
+                settleBrandModel.shopName = brandModel.shopName;
+                [settleBagModel.list addObject:settleBrandModel];
+            }
+        }
+        
+        NZConfirmOrderViewController *confirmOrderVCTR = [[NZConfirmOrderViewController alloc] init];
+        confirmOrderVCTR.shopBagModel = settleBagModel;
+        [self.navigationController pushViewController:confirmOrderVCTR animated:YES];
+    }
 }
 
 @end

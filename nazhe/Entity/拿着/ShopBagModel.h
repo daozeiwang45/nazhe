@@ -64,5 +64,9 @@
  *  是否被选中
  */
 @property (nonatomic, assign) BOOL selectState;
+/**
+ *  运费
+ */
+@property (nonatomic, assign) float expressPrice;
 
 @end
