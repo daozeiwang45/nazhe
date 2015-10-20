@@ -10,6 +10,7 @@
 #import "NZOrderConfirmViewController.h"
 #import "GoodParametersModel.h"
 #import "NZShoppingBagViewController.h"
+#import "NZLoginViewController.h"
 
 //选择框高度
 #define Height1 25
@@ -793,7 +794,7 @@
         
         sender.backgroundColor = darkRedColor;
         [sender setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        UIButton *oldButton = (UIButton *)[self.selectedView viewWithTag:self.sizeListModelIndex+300];
+        UIButton *oldButton = (UIButton *)[self.selectedView viewWithTag:self.fillInListModelIndex+300];
         
         if (self.fillInListModelIndex != -1) {
             FillInListModel *fillInListModelOld = self.fillInListModelArry[self.fillInListModelIndex];
@@ -1177,37 +1178,51 @@
 
 - (IBAction)buyAction:(UIButton *)sender {
     
+    //判断是否选择 了参数
     if ([self checkGoodValue]) {
-        
-        //先给选好的参数赋值
-        [self addGoodBaseValue];
-        
-        NZOrderConfirmViewController *orderConfirmViewCtr = [[NZOrderConfirmViewController alloc] initWithNibName:@"NZOrderConfirmViewController" bundle:nil];
-        
-        //给订单基本信息赋值
-        orderConfirmViewCtr.orderGoodImgView = self.parametersModel.img;
-        orderConfirmViewCtr.orderGoodName = self.parametersModel.name;
-        orderConfirmViewCtr.orderGoodNum = [NSString stringWithFormat:@"×%i",self.number];
-        orderConfirmViewCtr.orderGoodPrice = [NSString stringWithFormat:@"￥%.2f",self.goodPrice];
-        orderConfirmViewCtr.orderGoodAllNum = [NSString stringWithFormat:@"共%i件商品",self.number];
-        orderConfirmViewCtr.orderGoodAllPrice = [NSString stringWithFormat:@"￥%.2f",self.goodPrice*self.number];
-        
-        //给订单产品参数赋值
-        orderConfirmViewCtr.goodPayPrice = self.goodPrice*self.number;
-        orderConfirmViewCtr.goodPayNum = self.number;
-        //给选择好的产品参数赋值
-        orderConfirmViewCtr.weightStr = self.weightStr;
-        orderConfirmViewCtr.sizeStr = self.sizeStr;
-        orderConfirmViewCtr.gradeStr = self.gradeStr;
-        orderConfirmViewCtr.hardnessStr = self.hardnessStr;
-        orderConfirmViewCtr.fillInStr = self.fillInStr;
-        orderConfirmViewCtr.accessoriesStr = self.accessoriesStr;
-        orderConfirmViewCtr.colorStr = self.colorStr;
-        orderConfirmViewCtr.packStr = self.packStr;
-        
-        [self.navigationController pushViewController:orderConfirmViewCtr animated:YES];
 
-    }
+        //判断是否登入
+        NZFastOperate *fastOperate = [NZFastOperate sharedObject];
+        if ([fastOperate isLogin]) {
+            
+            //先给选好的参数赋值
+            [self addGoodBaseValue];
+            
+            NZOrderConfirmViewController *orderConfirmViewCtr = [[NZOrderConfirmViewController alloc] initWithNibName:@"NZOrderConfirmViewController" bundle:nil];
+            
+            //给订单基本信息赋值
+            orderConfirmViewCtr.orderGoodImgView = self.parametersModel.img;
+            orderConfirmViewCtr.orderGoodName = self.parametersModel.name;
+            orderConfirmViewCtr.orderGoodNum = [NSString stringWithFormat:@"×%i",self.number];
+            orderConfirmViewCtr.orderGoodPrice = [NSString stringWithFormat:@"￥%.2f",self.goodPrice];
+            orderConfirmViewCtr.orderGoodAllNum = [NSString stringWithFormat:@"共%i件商品",self.number];
+            orderConfirmViewCtr.orderGoodAllPrice = [NSString stringWithFormat:@"￥%.2f",self.goodPrice*self.number];
+            
+            //给订单产品参数赋值
+            orderConfirmViewCtr.goodPayPrice = self.goodPrice*self.number;
+            orderConfirmViewCtr.goodPayNum = self.number;
+            //给选择好的产品参数赋值
+            orderConfirmViewCtr.weightStr = self.weightStr;
+            orderConfirmViewCtr.sizeStr = self.sizeStr;
+            orderConfirmViewCtr.gradeStr = self.gradeStr;
+            orderConfirmViewCtr.hardnessStr = self.hardnessStr;
+            orderConfirmViewCtr.fillInStr = self.fillInStr;
+            orderConfirmViewCtr.accessoriesStr = self.accessoriesStr;
+            orderConfirmViewCtr.colorStr = self.colorStr;
+            orderConfirmViewCtr.packStr = self.packStr;
+            
+            [self.navigationController pushViewController:orderConfirmViewCtr animated:YES];
+
+            
+        }else{
+            
+            NZLoginViewController *loginVC = [NZLoginViewController new];
+            [self presentViewController:loginVC animated:NO completion:nil];
+
+        }
+
+        
+     }
 }
 
 //加入购物车-----
