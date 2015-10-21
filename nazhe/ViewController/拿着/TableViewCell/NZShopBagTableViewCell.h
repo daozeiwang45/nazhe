@@ -11,7 +11,7 @@
 
 @protocol NZShopBagDelegate <NSObject>
 
-- (void)selectClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number;
+- (void)selectClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number andExpressPrice:(float)expressPrice;
 - (void)deleteClickWithSection:(int)section andRow:(int)row andState:(BOOL)selectState andPrice:(double)price andNumber:(int)number;
 - (void)editClickWithSection:(int)section andRow:(int)row;
 

@@ -36,6 +36,9 @@
 		1F4004E11B817CDA00BA59DB /* cellLine@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F4004DD1B817CDA00BA59DB /* cellLine@2x.png */; };
 		1F4004E21B817CDA00BA59DB /* LCActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4004DF1B817CDA00BA59DB /* LCActionSheet.m */; };
 		1F4004E61B81AC6400BA59DB /* AdView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4004E51B81AC6400BA59DB /* AdView.m */; };
+		1F42032B1BD4D36600EC9519 /* NZConfirmOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F42032A1BD4D36600EC9519 /* NZConfirmOrderViewController.m */; };
+		1F42032E1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F42032D1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.m */; };
+		1F4203311BD503E200EC9519 /* NZSettleViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4203301BD503E200EC9519 /* NZSettleViewCell.m */; };
 		1F449BA01BB51D0B00CC995F /* PasspParametersModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F449B9F1BB51D0B00CC995F /* PasspParametersModel.m */; };
 		1F449BA31BB5356F00CC995F /* GoodListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F449BA21BB5356F00CC995F /* GoodListModel.m */; };
 		1F45536C1BAFA2BD00C6854C /* city.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F45536B1BAFA2BD00C6854C /* city.plist */; };
@@ -116,6 +119,10 @@
 		1F4B36F11BA06BC0009C3907 /* 手链图标.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F4B36EF1BA06BC0009C3907 /* 手链图标.png */; };
 		1F4B36F41BA06BD0009C3907 /* 手镯底图.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F4B36F21BA06BD0009C3907 /* 手镯底图.png */; };
 		1F4B36F51BA06BD0009C3907 /* 手镯图标.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F4B36F31BA06BD0009C3907 /* 手镯图标.png */; };
+		1F4C306E1BD5ECAE0067B425 /* NZAddressListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4C306D1BD5ECAE0067B425 /* NZAddressListModel.m */; };
+		1F4C30711BD6190B0067B425 /* NZChangeAddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4C30701BD6190B0067B425 /* NZChangeAddressViewController.m */; };
+		1F4C30771BD62E0B0067B425 /* NZChangeAddressViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4C30761BD62E0B0067B425 /* NZChangeAddressViewCell.m */; };
+		1F4C307A1BD6329F0067B425 /* NZChangeAddressViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4C30791BD6329F0067B425 /* NZChangeAddressViewModel.m */; };
 		1F4CC9C11BB14AD90081DBA6 /* SettingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4CC9C01BB14AD90081DBA6 /* SettingModel.m */; };
 		1F4CC9C41BB16F970081DBA6 /* NZEditAddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4CC9C31BB16F970081DBA6 /* NZEditAddressViewController.m */; };
 		1F530F511BA523AD00D93241 /* 图标8.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F530F4F1BA523AD00D93241 /* 图标8.png */; };
@@ -337,6 +344,12 @@
 		1F4004DF1B817CDA00BA59DB /* LCActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LCActionSheet.m; sourceTree = "<group>"; };
 		1F4004E41B81AC6400BA59DB /* AdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdView.h; sourceTree = "<group>"; };
 		1F4004E51B81AC6400BA59DB /* AdView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdView.m; sourceTree = "<group>"; };
+		1F4203291BD4D36600EC9519 /* NZConfirmOrderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZConfirmOrderViewController.h; sourceTree = "<group>"; };
+		1F42032A1BD4D36600EC9519 /* NZConfirmOrderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZConfirmOrderViewController.m; sourceTree = "<group>"; };
+		1F42032C1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZSettleGoodsViewModel.h; sourceTree = "<group>"; };
+		1F42032D1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZSettleGoodsViewModel.m; sourceTree = "<group>"; };
+		1F42032F1BD503E200EC9519 /* NZSettleViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZSettleViewCell.h; sourceTree = "<group>"; };
+		1F4203301BD503E200EC9519 /* NZSettleViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZSettleViewCell.m; sourceTree = "<group>"; };
 		1F449B9E1BB51D0B00CC995F /* PasspParametersModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasspParametersModel.h; sourceTree = "<group>"; };
 		1F449B9F1BB51D0B00CC995F /* PasspParametersModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PasspParametersModel.m; sourceTree = "<group>"; };
 		1F449BA11BB5356F00CC995F /* GoodListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodListModel.h; sourceTree = "<group>"; };
@@ -455,6 +468,14 @@
 		1F4B36EF1BA06BC0009C3907 /* 手链图标.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "手链图标.png"; sourceTree = "<group>"; };
 		1F4B36F21BA06BD0009C3907 /* 手镯底图.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "手镯底图.png"; sourceTree = "<group>"; };
 		1F4B36F31BA06BD0009C3907 /* 手镯图标.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "手镯图标.png"; sourceTree = "<group>"; };
+		1F4C306C1BD5ECAE0067B425 /* NZAddressListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZAddressListModel.h; sourceTree = "<group>"; };
+		1F4C306D1BD5ECAE0067B425 /* NZAddressListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZAddressListModel.m; sourceTree = "<group>"; };
+		1F4C306F1BD6190B0067B425 /* NZChangeAddressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZChangeAddressViewController.h; sourceTree = "<group>"; };
+		1F4C30701BD6190B0067B425 /* NZChangeAddressViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZChangeAddressViewController.m; sourceTree = "<group>"; };
+		1F4C30751BD62E0B0067B425 /* NZChangeAddressViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NZChangeAddressViewCell.h; path = TableViewCell/NZChangeAddressViewCell.h; sourceTree = "<group>"; };
+		1F4C30761BD62E0B0067B425 /* NZChangeAddressViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NZChangeAddressViewCell.m; path = TableViewCell/NZChangeAddressViewCell.m; sourceTree = "<group>"; };
+		1F4C30781BD6329F0067B425 /* NZChangeAddressViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZChangeAddressViewModel.h; sourceTree = "<group>"; };
+		1F4C30791BD6329F0067B425 /* NZChangeAddressViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZChangeAddressViewModel.m; sourceTree = "<group>"; };
 		1F4CC9BF1BB14AD90081DBA6 /* SettingModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingModel.h; sourceTree = "<group>"; };
 		1F4CC9C01BB14AD90081DBA6 /* SettingModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingModel.m; sourceTree = "<group>"; };
 		1F4CC9C21BB16F970081DBA6 /* NZEditAddressViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZEditAddressViewController.h; sourceTree = "<group>"; };
@@ -1345,6 +1366,10 @@
 				1F3FF2A91BB97475007AA014 /* NZOrderViewModel.m */,
 				1F544BEB1BD0A94800290BC3 /* NZShopBagViewModel.h */,
 				1F544BEC1BD0A94800290BC3 /* NZShopBagViewModel.m */,
+				1F42032C1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.h */,
+				1F42032D1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.m */,
+				1F4C30781BD6329F0067B425 /* NZChangeAddressViewModel.h */,
+				1F4C30791BD6329F0067B425 /* NZChangeAddressViewModel.m */,
 			);
 			path = "拿着";
 			sourceTree = "<group>";
@@ -1596,6 +1621,8 @@
 				1F5626EC1BCF83CC008B604E /* ShopBagModel.m */,
 				1F6CED081BD23FC9005A7BA3 /* GoodSpecificationsModel.h */,
 				1F6CED091BD23FC9005A7BA3 /* GoodSpecificationsModel.m */,
+				1F4C306C1BD5ECAE0067B425 /* NZAddressListModel.h */,
+				1F4C306D1BD5ECAE0067B425 /* NZAddressListModel.m */,
 			);
 			name = "购物袋";
 			sourceTree = "<group>";
@@ -1744,6 +1771,10 @@
 				1F66D6701B9695D5007CFF94 /* NZShoppingBagViewController.h */,
 				1F66D6711B9695D5007CFF94 /* NZShoppingBagViewController.m */,
 				1F66D6721B9695D5007CFF94 /* NZShoppingBagViewController.xib */,
+				1F4203291BD4D36600EC9519 /* NZConfirmOrderViewController.h */,
+				1F42032A1BD4D36600EC9519 /* NZConfirmOrderViewController.m */,
+				1F4C306F1BD6190B0067B425 /* NZChangeAddressViewController.h */,
+				1F4C30701BD6190B0067B425 /* NZChangeAddressViewController.m */,
 			);
 			name = "购物袋";
 			sourceTree = "<group>";
@@ -1796,6 +1827,10 @@
 				1F544BE91BD0907300290BC3 /* NZShopBagTableViewCell.m */,
 				1F544BE51BD0904C00290BC3 /* NZShopBagExpandTableViewCell.h */,
 				1F544BE61BD0904C00290BC3 /* NZShopBagExpandTableViewCell.m */,
+				1F42032F1BD503E200EC9519 /* NZSettleViewCell.h */,
+				1F4203301BD503E200EC9519 /* NZSettleViewCell.m */,
+				1F4C30751BD62E0B0067B425 /* NZChangeAddressViewCell.h */,
+				1F4C30761BD62E0B0067B425 /* NZChangeAddressViewCell.m */,
 			);
 			name = TableViewCell;
 			sourceTree = "<group>";
@@ -2374,12 +2409,14 @@
 				1F49C6211B7B409C006532B7 /* ViewController.m in Sources */,
 				1F544BED1BD0A94800290BC3 /* NZShopBagViewModel.m in Sources */,
 				1F7AE26C1B7CB043008A26EA /* UIDevice+Category.m in Sources */,
+				1F42032E1BD4F0DE00EC9519 /* NZSettleGoodsViewModel.m in Sources */,
 				1F66D6791B96A7B0007CFF94 /* NZPrivilegeViewController.m in Sources */,
 				1F47716A1B9C0A270001D14C /* NZMyWalletViewController.m in Sources */,
 				1F5C30DE1B8F079A008C7533 /* NZDownArrowView.m in Sources */,
 				1F4CC9C41BB16F970081DBA6 /* NZEditAddressViewController.m in Sources */,
 				1F7AE2201B7C77A4008A26EA /* AnimateTabbar.m in Sources */,
 				1F7AE2661B7CB043008A26EA /* NSMutableArray+Category.m in Sources */,
+				1F42032B1BD4D36600EC9519 /* NZConfirmOrderViewController.m in Sources */,
 				1F530F751BA56F8E00D93241 /* NZDeliveryAddressViewCell.m in Sources */,
 				4FFB32511BCB5F0600306AFD /* DataSigner.m in Sources */,
 				4FFB32531BCB5F0600306AFD /* MD5DataSigner.m in Sources */,
@@ -2397,9 +2434,11 @@
 				1F4A9EDD1BA679D1005E8C33 /* NZReplyModel.m in Sources */,
 				1FC0260B1BA90FE00003C347 /* NZRegistFinalViewController.m in Sources */,
 				1F5C30E31B8F079A008C7533 /* NZUpArrowView.m in Sources */,
+				1F4C30771BD62E0B0067B425 /* NZChangeAddressViewCell.m in Sources */,
 				1F4B36B91BA00C6A009C3907 /* NZNewProductViewCell.m in Sources */,
 				1F645AB81B95732D001CBC20 /* NZOrderViewCell.m in Sources */,
 				1F9ECD5A1B7D8E7600810B7D /* NZTakeController.m in Sources */,
+				1F4203311BD503E200EC9519 /* NZSettleViewCell.m in Sources */,
 				1F49FBAA1BCBD15D00FD0014 /* ActivityReviewModel.m in Sources */,
 				1F4771701B9C14CD0001D14C /* NZCustomerServiceViewController.m in Sources */,
 				1F7F16A61BA84CA80089E3FB /* NZRegistSecondViewController.m in Sources */,
@@ -2452,6 +2491,7 @@
 				1F4B36B01B9FE31A009C3907 /* NZGrabViewCell.m in Sources */,
 				1F9ECD571B7D8CA900810B7D /* NZLoveController.m in Sources */,
 				1F9ECD541B7D832A00810B7D /* NSString+NZ_Category.m in Sources */,
+				1F4C30711BD6190B0067B425 /* NZChangeAddressViewController.m in Sources */,
 				1F49C6291B7B41E8006532B7 /* NZUser.m in Sources */,
 				1F530F6A1BA55F1200D93241 /* NZPrivacyViewController.m in Sources */,
 				1FC0260E1BA93C1A0003C347 /* NZLoginViewController.m in Sources */,
@@ -2504,6 +2544,7 @@
 				1F68415F1B8AAA29007CC3A6 /* NZConstellationScrollView.m in Sources */,
 				1F5BAB981B94813600271584 /* ProgressBarView.m in Sources */,
 				1F5C30CA1B8EEF43008C7533 /* NZCommodityListCell.m in Sources */,
+				1F4C307A1BD6329F0067B425 /* NZChangeAddressViewModel.m in Sources */,
 				1F7AE2621B7CB043008A26EA /* NSArray+Category.m in Sources */,
 				1F4A9EE01BA703BE005E8C33 /* NZProtocolViewController.m in Sources */,
 				4FFB325B1BCB61CE00306AFD /* GoodParametersModel.m in Sources */,
@@ -2512,6 +2553,7 @@
 				1F7AE2721B7CB043008A26EA /* UITableView+ZGParallelView.m in Sources */,
 				1F4004E61B81AC6400BA59DB /* AdView.m in Sources */,
 				1F4004D91B8176A700BA59DB /* JJNewFeatureController.m in Sources */,
+				1F4C306E1BD5ECAE0067B425 /* NZAddressListModel.m in Sources */,
 				1F6841651B8B2A59007CC3A6 /* NZCardsCarouselView.m in Sources */,
 				1F626A641BAC360B0052F7E7 /* NZBankCardViewController.m in Sources */,
 				1F4004D81B8176A700BA59DB /* JJNewFeatureCell.m in Sources */,

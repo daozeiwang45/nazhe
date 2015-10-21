@@ -165,7 +165,7 @@
         [selectBtn setBackgroundImage:[UIImage imageNamed:@"圆-未选"] forState:UIControlStateNormal];
     }
     
-    [self.delegate selectClickWithSection:_section andRow:_row andState:self.selectState andPrice:self.price andNumber:self.number];
+    [self.delegate selectClickWithSection:_section andRow:_row andState:self.selectState andPrice:self.price andNumber:self.number andExpressPrice:_shopBagViewModel.shopBagGoodModel.expressPrice];
 }
 
 - (void)deleteAction:(UIButton *)sender {

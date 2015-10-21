@@ -8,6 +8,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NZShoppingBagViewController">
             <connections>
+                <outlet property="bottomHeight" destination="mxv-Go-Gek" id="BTz-Ek-Loy"/>
+                <outlet property="expressPriceLab" destination="DuT-Uk-FHS" id="aUb-da-Zbk"/>
                 <outlet property="selectImgV" destination="lgA-DV-bQD" id="rrJ-Z3-ru1"/>
                 <outlet property="settelView" destination="e3z-mv-Mda" id="8NX-Xg-9zW"/>
                 <outlet property="settleBtn" destination="t2D-0G-C3V" id="acf-7m-57l"/>

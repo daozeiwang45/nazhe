@@ -67,6 +67,7 @@ extern NSString *webShoppingBagsList; // 购物袋列表接口
 extern NSString *webShoppingBagsGoodNumberEdit; // 购物袋编辑数量接口
 extern NSString *webShoppingBagsGoodDelete; // 购物袋删除接口
 extern NSString *webShoppingBagsSpecs; // 商品参数编辑接口
+extern NSString *webGetDefaultAddress; // 立即购买接口
 
 extern NSString *webServiceHelp; // 客服帮助接口
 extern NSString *webServiceMessage; // 客服留言接口
@@ -113,6 +114,12 @@ extern NSString *NZMajorSuitCellIdentify;
 // 购物袋cell
 extern NSString *NZShopBagCellIdentify;
 extern NSString *NZShopBagExpendCellIdentify;
+
+// 购物袋订单确认cell
+extern NSString *NZSettleCellIdentify;
+// 更换收货地址cell
+extern NSString *NZChangeAddressCellIdentify;
+
 // 收货地址cell
 extern NSString *NZDeliveryAddressViewCellIdentify;
 // 账单纪录cell
