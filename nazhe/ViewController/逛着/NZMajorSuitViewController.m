@@ -53,10 +53,12 @@
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     hud.labelText = @"请稍候..." ;
+    NZUser *user = [NZUserManager sharedObject].user;
+    
     NSDictionary *parameters = @{
                                  @"page_no":[NSNumber numberWithInt:self.pageNo],
-                                 @"userId":[NSNumber numberWithInt:6],
-                                 @"shopId":[NSNumber numberWithInt:3]
+                                 @"userId":user.userId,
+                                 @"shopId":[NSNumber numberWithInt:self.shopId]
                                  
                                  };
 

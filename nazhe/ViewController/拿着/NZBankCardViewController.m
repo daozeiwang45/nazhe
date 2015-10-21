@@ -9,6 +9,7 @@
 #import "NZBankCardViewController.h"
 #import "NZBankCardCell.h"
 #import "BankCardModel.h"
+#import "NZAddBankCardViewController.h"
 
 @interface NZBankCardViewController ()<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate> {
     BankCardModel *bankCardModel;
@@ -33,9 +34,10 @@
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.showsVerticalScrollIndicator = NO;
     [self.view addSubview:_tableView];
     
-    [self requestBankCardData]; // 请求银行卡数据
+    //[self requestBankCardData]; // 请求银行卡数据
 }
 
 #pragma mark UITableViewDataSource
@@ -64,7 +66,7 @@
 //    NSString *numberStr = [bankCardInfo.cardNumber substringFromIndex:14];
     cell.numberLab.text = [NSString stringWithFormat:@"尾号%@", bankCardInfo.cardNumber];
     
-    cell.subLab.text = bankCardInfo.bankBranch;
+    cell.subLab.text = bankCardInfo.category;
     
     objc_setAssociatedObject(cell.deleteBtn, "cardID", [NSNumber numberWithInt:bankCardInfo.ID], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [cell.deleteBtn addTarget:self action:@selector(deleteBankCard:) forControlEvents:UIControlEventTouchUpInside];
@@ -77,9 +79,12 @@
     UIView *whiteView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.frame.size.width, 200)];
     whiteView.backgroundColor = [UIColor whiteColor];
     
-    UIImageView *addAddressImgV = [[UIImageView alloc] initWithFrame:CGRectMake((_tableView.frame.size.width-59)/2, 20, 59, 49)];
+    UIButton *addBankButton = [[UIButton alloc]initWithFrame:CGRectMake((_tableView.frame.size.width-59)/2, 20, 59, 49)];
+    UIImageView *addAddressImgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 59, 49)];
     addAddressImgV.image = [UIImage imageNamed:@"添加银行"];
-    [whiteView addSubview:addAddressImgV];
+    [addBankButton addTarget:self action:@selector(addBankButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [addBankButton addSubview:addAddressImgV];
+    [whiteView addSubview:addBankButton];
     
     UIImageView *attentionIcon = [[UIImageView alloc] initWithFrame:CGRectMake(23, 155, 18, 23)];
     attentionIcon.image = [UIImage imageNamed:@"注意"];
@@ -107,6 +112,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    BankCardInfoModel *bankCardInfo = bankCardModel.list[indexPath.row];
+    
+    NZAddBankCardViewController *addBankCardVC= [[NZAddBankCardViewController alloc] initWithNibName:@"NZAddBankCardViewController" bundle:nil];
+    addBankCardVC.bankOperateType = enumtBankOperateType_Look;
+    addBankCardVC.bankCardId = bankCardInfo.ID;
+    [self.navigationController pushViewController:addBankCardVC animated:YES];
 }
 
 #pragma mark UIAlertViewDelegate
@@ -192,6 +203,13 @@
     
 }
 
+-(void)addBankButtonAction:(UIButton *)sender{
+    
+    NZAddBankCardViewController *addBankCardVC= [[NZAddBankCardViewController alloc] initWithNibName:@"NZAddBankCardViewController" bundle:nil];
+    addBankCardVC.bankOperateType = enumtBankOperateType_Add;
+    [self.navigationController pushViewController:addBankCardVC animated:YES];
+}
+
 - (void)deleteBankCard {
     
     __weak typeof(self)wSelf = self ;
@@ -249,6 +267,11 @@
              [wSelf.view makeToast:[retInfo objectForKey:@"msg"]] ;
          }
      }] ;
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    
+    [self requestBankCardData]; // 请求银行卡数据
 }
 
 @end

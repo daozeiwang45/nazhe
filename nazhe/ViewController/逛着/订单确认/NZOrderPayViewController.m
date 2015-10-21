@@ -47,7 +47,7 @@
     
     //给页面元素赋值
     self.orderNumberLab.text = self.orderNumberStr;
-    self.payPriceLab.text = [NSString stringWithFormat:@"￥%.2f",self.orderTotalPrice-self.orderDiscountPrice];
+    self.payPriceLab.text = [NSString stringWithFormat:@"￥%.2f 张可用的优惠卷",self.orderTotalPrice-self.orderDiscountPrice];
     self.totalPriceLab.text = [NSString stringWithFormat:@"￥%.2f",self.orderTotalPrice];
     self.myBalanceLab.text = self.myBalanceStr;
     self.moreMyBalanceLab.hidden = YES;
@@ -109,6 +109,10 @@
 
 }
 
+- (IBAction)grabButtonAction:(UIButton *)sender {
+    
+    
+}
 
 - (IBAction)payMomeyWithAlipayActon:(id)sender {
     

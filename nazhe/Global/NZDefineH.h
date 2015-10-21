@@ -135,4 +135,14 @@ typedef NS_ENUM(NSInteger , enumtDynamicType)
 
 };
 
+// 银行卡操作类型
+typedef NS_ENUM(NSInteger , enumtBankOperateType)
+{
+    enumtBankOperateType_Add = 0,                   // 增加银行卡
+    enumtBankOperateType_Modify,                    // 修改银行卡
+    enumtBankOperateType_Look,                      // 查看银行卡
+    enumtBankOperateType_Success                    // 成功类型
+};
+
+
 #endif

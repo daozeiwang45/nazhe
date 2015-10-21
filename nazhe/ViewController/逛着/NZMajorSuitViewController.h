@@ -21,5 +21,6 @@
 
 //显示的页数
 @property (nonatomic,assign)int pageNo;
+@property (nonatomic,assign)int shopId;
 
 @end

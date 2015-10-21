@@ -132,7 +132,6 @@
 		1F544BEA1BD0907300290BC3 /* NZShopBagTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F544BE91BD0907300290BC3 /* NZShopBagTableViewCell.m */; };
 		1F544BED1BD0A94800290BC3 /* NZShopBagViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F544BEC1BD0A94800290BC3 /* NZShopBagViewModel.m */; };
 		1F5626ED1BCF83CC008B604E /* ShopBagModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5626EC1BCF83CC008B604E /* ShopBagModel.m */; };
-		1F5626F01BCFC906008B604E /* NZAddBankCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5626EF1BCFC906008B604E /* NZAddBankCardViewController.m */; };
 		1F5A3AE11BB3CFCC006D06EB /* LoveModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5A3AE01BB3CFCC006D06EB /* LoveModel.m */; };
 		1F5BAB801B94253200271584 /* NZTakeContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BAB7F1B94253200271584 /* NZTakeContentView.m */; };
 		1F5BAB931B947FC300271584 /* NZOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5BAB911B947FC300271584 /* NZOrderViewController.m */; };
@@ -235,6 +234,8 @@
 		1FC0260E1BA93C1A0003C347 /* NZLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC0260D1BA93C1A0003C347 /* NZLoginViewController.m */; };
 		1FC026121BA988FB0003C347 /* NZSelectBindingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC026111BA988FB0003C347 /* NZSelectBindingViewController.m */; };
 		1FC026151BA989060003C347 /* NZBindingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC026141BA989060003C347 /* NZBindingViewController.m */; };
+		4FD528D51BD4C1AB000ED91A /* NZAddBankCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FD528D31BD4C1AB000ED91A /* NZAddBankCardViewController.m */; };
+		4FD528D61BD4C1AB000ED91A /* NZAddBankCardViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4FD528D41BD4C1AB000ED91A /* NZAddBankCardViewController.xib */; };
 		4FFB32491BCB5F0600306AFD /* NZOrderConfirmViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB31E01BCB5F0600306AFD /* NZOrderConfirmViewController.m */; };
 		4FFB324A1BCB5F0600306AFD /* NZOrderConfirmViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4FFB31E11BCB5F0600306AFD /* NZOrderConfirmViewController.xib */; };
 		4FFB324B1BCB5F0600306AFD /* NZOrderPayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB31E31BCB5F0600306AFD /* NZOrderPayViewController.m */; };
@@ -480,8 +481,6 @@
 		1F544BEC1BD0A94800290BC3 /* NZShopBagViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZShopBagViewModel.m; sourceTree = "<group>"; };
 		1F5626EB1BCF83CC008B604E /* ShopBagModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShopBagModel.h; sourceTree = "<group>"; };
 		1F5626EC1BCF83CC008B604E /* ShopBagModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShopBagModel.m; sourceTree = "<group>"; };
-		1F5626EE1BCFC906008B604E /* NZAddBankCardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZAddBankCardViewController.h; sourceTree = "<group>"; };
-		1F5626EF1BCFC906008B604E /* NZAddBankCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZAddBankCardViewController.m; sourceTree = "<group>"; };
 		1F5A3ADF1BB3CFCC006D06EB /* LoveModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoveModel.h; sourceTree = "<group>"; };
 		1F5A3AE01BB3CFCC006D06EB /* LoveModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoveModel.m; sourceTree = "<group>"; };
 		1F5BAB7E1B94253200271584 /* NZTakeContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZTakeContentView.h; sourceTree = "<group>"; };
@@ -662,6 +661,9 @@
 		1FC026111BA988FB0003C347 /* NZSelectBindingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZSelectBindingViewController.m; sourceTree = "<group>"; };
 		1FC026131BA989060003C347 /* NZBindingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZBindingViewController.h; sourceTree = "<group>"; };
 		1FC026141BA989060003C347 /* NZBindingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZBindingViewController.m; sourceTree = "<group>"; };
+		4FD528D21BD4C1AB000ED91A /* NZAddBankCardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZAddBankCardViewController.h; sourceTree = "<group>"; };
+		4FD528D31BD4C1AB000ED91A /* NZAddBankCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZAddBankCardViewController.m; sourceTree = "<group>"; };
+		4FD528D41BD4C1AB000ED91A /* NZAddBankCardViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NZAddBankCardViewController.xib; sourceTree = "<group>"; };
 		4FFB31DF1BCB5F0600306AFD /* NZOrderConfirmViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NZOrderConfirmViewController.h; sourceTree = "<group>"; };
 		4FFB31E01BCB5F0600306AFD /* NZOrderConfirmViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NZOrderConfirmViewController.m; sourceTree = "<group>"; };
 		4FFB31E11BCB5F0600306AFD /* NZOrderConfirmViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NZOrderConfirmViewController.xib; sourceTree = "<group>"; };
@@ -1686,8 +1688,9 @@
 				1F626A651BAC3A660052F7E7 /* TableViewCell */,
 				1F626A621BAC360B0052F7E7 /* NZBankCardViewController.h */,
 				1F626A631BAC360B0052F7E7 /* NZBankCardViewController.m */,
-				1F5626EE1BCFC906008B604E /* NZAddBankCardViewController.h */,
-				1F5626EF1BCFC906008B604E /* NZAddBankCardViewController.m */,
+				4FD528D21BD4C1AB000ED91A /* NZAddBankCardViewController.h */,
+				4FD528D31BD4C1AB000ED91A /* NZAddBankCardViewController.m */,
+				4FD528D41BD4C1AB000ED91A /* NZAddBankCardViewController.xib */,
 			);
 			name = "银行卡";
 			sourceTree = "<group>";
@@ -2275,6 +2278,7 @@
 				1F4771841B9D73640001D14C /* 选择圆.png in Resources */,
 				1F5BAB941B947FC300271584 /* NZOrderViewController.xib in Resources */,
 				4FFB324C1BCB5F0600306AFD /* NZOrderPayViewController.xib in Resources */,
+				4FD528D61BD4C1AB000ED91A /* NZAddBankCardViewController.xib in Resources */,
 				1F4771711B9C14CD0001D14C /* NZCustomerServiceViewController.xib in Resources */,
 				1F4B36D71BA047DB009C3907 /* 品牌图3.png in Resources */,
 				1F4B36E71BA06B96009C3907 /* 戒指图标.png in Resources */,
@@ -2377,7 +2381,6 @@
 				1F7AE2201B7C77A4008A26EA /* AnimateTabbar.m in Sources */,
 				1F7AE2661B7CB043008A26EA /* NSMutableArray+Category.m in Sources */,
 				1F530F751BA56F8E00D93241 /* NZDeliveryAddressViewCell.m in Sources */,
-				1F5626F01BCFC906008B604E /* NZAddBankCardViewController.m in Sources */,
 				4FFB32511BCB5F0600306AFD /* DataSigner.m in Sources */,
 				4FFB32531BCB5F0600306AFD /* MD5DataSigner.m in Sources */,
 				4FFB32551BCB5F0600306AFD /* openssl_wrapper.m in Sources */,
@@ -2440,6 +2443,7 @@
 				1F626A691BAC3A950052F7E7 /* NZBankCardCell.m in Sources */,
 				1F9ECD5D1B7D8EAB00810B7D /* NZChatController.m in Sources */,
 				1F5C30E71B8F0F20008C7533 /* NZLeftTriangleArrowView.m in Sources */,
+				4FD528D51BD4C1AB000ED91A /* NZAddBankCardViewController.m in Sources */,
 				1F4A9ECC1BA65F5F005E8C33 /* NZBillingViewController.m in Sources */,
 				1F7AE26E1B7CB043008A26EA /* UIImage+StackBlur.m in Sources */,
 				1F3FF2A71BB972BC007AA014 /* NZOrderExpendTableViewCell.m in Sources */,

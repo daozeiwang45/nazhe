@@ -611,7 +611,7 @@
     [headerView addSubview:brandImageV1];
     
     UIButton *btn1 = [[UIButton alloc] initWithFrame:brandImageV1.frame];
-    btn1.tag = 1001;
+    btn1.tag = 1000+[[[self.activitiesMajorSuitDetailInfoArry objectAtIndex:0] objectForKey:@"shopId"]integerValue];
     btn1.backgroundColor = [UIColor clearColor];
     [btn1 addTarget:self action:@selector(brandDetailJump:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:btn1];
@@ -633,7 +633,7 @@
     [headerView addSubview:brandImageV2];
     
     UIButton *btn2 = [[UIButton alloc] initWithFrame:brandImageV2.frame];
-    btn2.tag = 1002;
+    btn2.tag = 1000+[[[self.activitiesMajorSuitDetailInfoArry objectAtIndex:1] objectForKey:@"shopId"]integerValue];
     btn2.backgroundColor = [UIColor clearColor];
     [btn2 addTarget:self action:@selector(brandDetailJump:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:btn2];
@@ -653,7 +653,7 @@
     [headerView addSubview:brandImageV3];
     
     UIButton *btn3 = [[UIButton alloc] initWithFrame:brandImageV3.frame];
-    btn3.tag = 1003;
+    btn3.tag =1000+ [[[self.activitiesMajorSuitDetailInfoArry objectAtIndex:2] objectForKey:@"shopId"]integerValue];
     btn3.backgroundColor = [UIColor clearColor];
     [btn3 addTarget:self action:@selector(brandDetailJump:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:btn3];
@@ -673,7 +673,7 @@
     [headerView addSubview:brandImageV4];
     
     UIButton *btn4 = [[UIButton alloc] initWithFrame:brandImageV4.frame];
-    btn4.tag = 1004;
+    btn4.tag =1000+ [[[self.activitiesMajorSuitDetailInfoArry objectAtIndex:3] objectForKey:@"shopId"]integerValue];
     btn4.backgroundColor = [UIColor clearColor];
     [btn4 addTarget:self action:@selector(brandDetailJump:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:btn4];
@@ -693,7 +693,7 @@
     [headerView addSubview:brandImageV5];
     
     UIButton *btn5 = [[UIButton alloc] initWithFrame:brandImageV5.frame];
-    btn5.tag = 1005;
+    btn5.tag = 1000+[[[self.activitiesMajorSuitDetailInfoArry objectAtIndex:4] objectForKey:@"shopId"]integerValue];
     btn5.backgroundColor = [UIColor clearColor];
     [btn5 addTarget:self action:@selector(brandDetailJump:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:btn5];
@@ -2032,9 +2032,12 @@
 }
 
 #pragma mark 界面跳转都在这
-- (void)brandDetailJump:(UIButton *)button {
+- (void)brandDetailJump:(UIButton *)sender {
+    
+    int  shopId = (int)sender.tag - 1000;
     NZMajorSuitViewController *majorSuitVCTR = [[NZMajorSuitViewController alloc] init];
     majorSuitVCTR.hidesBottomBarWhenPushed = YES;
+    majorSuitVCTR.shopId = shopId;
     [self.navigationController pushViewController:majorSuitVCTR animated:YES];
 }
 
